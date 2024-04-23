@@ -75,3 +75,13 @@ input[type="number"] {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 
 }
+
+.PhoneInputInput {
+	/* The phone number input stretches to fill all empty space */
+	flex: 1;
+	/* The phone number input should shrink
+	   to make room for the extension input */
+	min-width: 0;
+	background-color: transparent !important ;
+	outline: none !important;
+}

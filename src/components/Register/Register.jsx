@@ -13,10 +13,10 @@ import InputPhoneNumber from '../Input/InputPhoneNumber'
 
 const Register = () => {
 
-  const [next, setNext] = useState(false)
   const [loading, setLoading] = useState(false)
   const [cookies, setCookie, removeCookie] = useCookies(allCookies);
   const [verified, setVerified] = useState(false)
+  const [next, setNext] = useState(false)
   const [registerInfo, setRegisterInfo] = useState({
     name: "",
     email: "",
