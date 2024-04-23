@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.primary{
+    @apply
+    bg-[#135994]
+  }
+  
+  .secondary{
+    @apply
+    bg-[#4CAF50]
+  }
+  
+  .accent{
+    @apply
+    bg-[#e74c3c]
+  }
+  
+  .neutral{
+    @apply
+    bg-[#ecf0f1]
+  }
+
+
+  .focusBorder{
+    @apply
+    has-[:focus]:border-[1px] 
+    has-[:focus]:border-[#3498db]
+  }
+  
+  
+  .invalidBorder{
+    @apply
+    border-[1px] 
+    border-[#e74c3c]
+  }
+  
+
+  .primaryText{
+    @apply
+    text-[#135994]
+  }
+  
+
+  .accentText{
+    @apply
+    text-[#e74c3c]
+  }
+
+
+.textOverflow{
+ -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+/* For WebKit browsers */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* For other browsers */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.eventsGrid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+}
