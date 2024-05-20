@@ -85,3 +85,12 @@ input[type="number"] {
 	background-color: transparent !important ;
 	outline: none !important;
 }
+
+.overlayBg {
+  @apply
+  bg-[#00000099]
+}
+
+.grid100 {
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+}

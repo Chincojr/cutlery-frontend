@@ -11,7 +11,7 @@ const UserViewEventsPage = () => {
             <div className=" hidden lg:flex ">
                 <Sidebar />
             </div>
-            <div className="flex flex-col  h-full overflow-hidden  ">
+            <div className="flex flex-col h-full overflow-hidden  ">
               <div className="w-full flex flex-between items-center px-2">
                   <div className="font-bold text-2xl py-4 w-full p-">Upcoming Events</div>
               </div>

@@ -23,6 +23,11 @@ module.exports = {
           '100%': { transform: 'translateX(0%)' },
         },
       },
+      backgroundImage: {
+        'hero': "url('../src/assets/store-main.webp')",
+        'knifeShapen': "url('../src/assets/knife-sharpening.webp')",
+        'scissor': "url('../src/assets/scissor.webp')",
+      },
       animation: {
         ToLeft: 'slideToLeft 1s ease-in-out 1 ',
         ToRight: 'slideToRight 1s ease-in-out 1 ',

@@ -41,16 +41,14 @@ const RouteFile = () => {
                 <Route path="/user-profile" element={<UserAccount />} />
 
                 {/* User Event Urls */}
-                <Route path="/" element={<UserViewEventsPage />} />
+                <Route path="/view/events" element={<UserViewEventsPage />} />
                 <Route path="/event/:eventID" element={<UserViewSpecificEventPage />} />
 
                 {/* User Notify Urls */}
                 <Route path="/notifications" element={<UserViewNotifyPage />} />
-             
 
-
-
-
+                {/* HomePage */}
+                <Route path="/" element={<HomePage />} />
 
 
             </Routes>
