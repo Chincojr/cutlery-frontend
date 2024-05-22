@@ -94,9 +94,14 @@ export const notifsFormFormat = [
       placeholder: "Enter Caption...",
       maxLength: 50,
   },
+  {
+    name : "link",
+    label : "Link",
+    type: "text",
+    placeholder: "Enter link or url of choice"
+},
 
 ]
-
 
 export const eventFormFomart = [
   {
@@ -157,7 +162,8 @@ export const adminEventErrMessage = {
 export const adminNotifyErrMessage = {
   title : "Title is required",
   selectDay: "Select date",
-  selectTime: "Invalid time "
+  selectTime: "Invalid time ",
+  link : "This url is invalid"
 }
 
 

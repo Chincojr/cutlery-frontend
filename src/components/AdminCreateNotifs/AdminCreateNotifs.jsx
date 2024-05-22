@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TodaysDate, timeCompare } from '../../UtilityFunctions'
+import { TodaysDate, isValidURL, timeCompare } from '../../UtilityFunctions'
 import DatePick from '../DatePicker/DatePick'
 import Input from '../Input/Input'
 import InputTextArea from '../Input/InputTextArea'
@@ -16,7 +16,8 @@ const AdminCreateNotifs = () => {
     caption: "",
     selectDay: presentDay,
     selectTime: presentTime,
-    automate : false
+    automate : false,
+    link:""
   })
 
   const [err, setErr] = useState({
@@ -35,25 +36,20 @@ const AdminCreateNotifs = () => {
                 return true
             }
             break;    
-        case "caption":
-            if ( !value ) {
-                setErr({...err, [name] : adminNotifyErrMessage[name]})
-                return true
-            }
-            break;   
-            case "selectDay":
+        case "selectDay":
+            if (notifInfo.automate) {
                 if ( !value ) {
                     setErr({...err, [name] : adminNotifyErrMessage[name]})
                     return true
                 }
-
                 if (value !== presentDay ) {
                     setErr({...err, ["selectTime"] : ""})
                     return true
                 }
-
-                break;   
-            case "selectTime":
+            }
+            break;   
+        case "selectTime":
+            if (notifInfo.automate) {
                 if (notifInfo.selectDay === presentDay) {
                     let checkTime = timeCompare(value,presentTime)
                     if ( !checkTime  ) {
@@ -61,8 +57,15 @@ const AdminCreateNotifs = () => {
                         return true
                     }
                 }
+            }
 
-                
+            break
+        case "link":
+            if ( value && isValidURL(value) ) {
+                setErr({...err, [name] : adminNotifyErrMessage[name]})
+                return true
+            }
+            break;    
         default:
             return false
             break;
@@ -87,16 +90,36 @@ const AdminCreateNotifs = () => {
   }
 
   const HandleCreate = () => {
-    let formErr = false
 
     for (let key in notifInfo) {
-        if (HandleInvalid(key,notifInfo[key])) {
-          formErr = true;
-          console.log(key);
+        let check = HandleInvalid(key,notifInfo[key])
+        if (check) {
+          console.log(key,notifInfo[key],check);
           return;
         }
     }
   }
+
+  const HandleDiscard = () => {
+    setErr({
+        title: "",
+        caption: "",
+        selectDay: "",
+        selectTime: "",
+    })
+    setNotifInfo({
+        title: "",
+        caption: "",
+        selectDay: presentDay,
+        selectTime: presentTime,
+        automate : false,
+        link:""
+    })    
+    console.log({notifInfo});
+
+  }
+
+
 
   return (
     <div className='' >
@@ -125,13 +148,13 @@ const AdminCreateNotifs = () => {
                     {
                         notifInfo.automate ? (
                             <DatePick datename={"selectDay"} timename={"selectTime"} labelText={"SelectTime"} valueDate={notifInfo["selectDay"]} valueTime={notifInfo["selectTime"]} handleChange={HandleChange} errorDay={err["selectDay"]} errorTime={err["selectTime"]} minDate={presentDay} />
-
                         ) : <></>
                     }
                 </div>
 
 
-                <div className="text-white w-full py-2 text-center">
+                <div className="text-white w-full py-2 flex items-center justify-center gap-10">
+                    <button onClick={HandleDiscard} className="rounded-[20px] outline-none uppercase accent p-2 px-4 text-[14px]">Discard</button>
                     <button onClick={HandleCreate} className="rounded-[20px] outline-none uppercase primary p-2 px-4 text-[14px]">Create</button>
                 </div>
                 

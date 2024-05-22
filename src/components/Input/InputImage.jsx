@@ -27,12 +27,12 @@ const InputImage = ({name,setInfo,info,error,handleInvalid}) => {
 
   return (
     <div className={` flex justify-center flex-col items-center `} >
-      <div className="w-[200px] h-[200px] relative">
-        <img src={info[name] ? info[name] : uploadImage} alt="" className= {`border-black border-2  w-full h-full `} />
-        <button onClick={() => HandleClearImage(name)}className="accent rotate-45 flex h-[30px] w-[30px] items-center justify-center rounded-full absolute top-1 left-1 ">
+      <div className="w-[200px] h-[200px] group/img relative">
+        <img src={info[name] ? info[name] : uploadImage} alt="" className= {`border-black border-2 w-full h-full object-cover `} />
+        <button onClick={() => HandleClearImage(name)}className=" accent group-hover/img:flex rotate-45 hidden h-[30px] w-[30px] items-center justify-center rounded-full absolute top-1 left-1 ">
             <IconSelector type={"Plus"} color={"white"} size={17}/>
         </button>
-        <div className="primary h-[35px] w-[35px] rounded-full flex justify-center items-center absolute right-[5px] bottom-[10px]">
+        <div className="primary h-[35px] w-[35px] rounded-full group-hover/img:flex hidden justify-center items-center absolute right-[5px] bottom-[10px]">
           <Uploader color={"white"} size={15} setSelectedFile={HandleAddImage}  uploadType={"image/*"} />
         </div>
       </div>

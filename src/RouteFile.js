@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Register from './components/Register/Register'
 import Login from './components/Login/Login'
 import AdminCreateNotifPage from './Pages/AdminCreateNotifPage'
@@ -16,39 +16,62 @@ import UserViewNotifyPage from './Pages/UserViewNotifyPage'
 
 
 const RouteFile = () => {
+
+  const [logged, setLogged] = useState(true)
+  const [loading, setLoading] = useState(true)
+
   return (
     <div>
         <Router>
             <Routes>
-                {/* <Route path="/" element={<HomePage />} /> */}
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login/>} />
+                {
 
-                {/* Admin Notify Urls */}
-                <Route path="/admin/new/notify" element={<AdminCreateNotifPage />} />
-                <Route path="/admin/view/notify" element={<AdminViewNotifsPage />} />
+                  logged ? 
+                   <>
+                      {/* Admin Notify Urls */}
+                      <Route path="/admin/new/notify" element={<AdminCreateNotifPage />} />
+                      <Route path="/admin/view/notify" element={<AdminViewNotifsPage />} />
 
-                {/* Admin Event Urls */}
-                <Route path="/admin/new/event" element={<AdminCreateEventsPage />} />
-                <Route path="/admin/view/events" element={<AdminViewEventsPage />} />
+                      {/* Admin Event Urls */}
+                      <Route path="/admin/new/event" element={<AdminCreateEventsPage />} />
+                      <Route path="/admin/view/events" element={<AdminViewEventsPage />} />
 
 
-                {/* User reminder Urls */}
-                <Route path="/new/reminder" element={<CreateReminderPage />} />
-                <Route path="/view/reminders" element={<ViewReminderPage />} />
+                      {/* User reminder Urls */}
+                      <Route path="/new/reminder" element={<CreateReminderPage />} />
+                      <Route path="/view/reminders" element={<ViewReminderPage />} />
 
-                {/* User profile settings */}
-                <Route path="/user-profile" element={<UserAccount />} />
+                      {/* User profile settings */}
+                      <Route path="/user-profile" element={<UserAccount />} />
 
-                {/* User Event Urls */}
-                <Route path="/view/events" element={<UserViewEventsPage />} />
-                <Route path="/event/:eventID" element={<UserViewSpecificEventPage />} />
+                      {/* User Event Urls */}
+                      <Route path="/view/events" element={<UserViewEventsPage />} />
+                      <Route path="/event/:eventID" element={<UserViewSpecificEventPage />} />
 
-                {/* User Notify Urls */}
-                <Route path="/notifications" element={<UserViewNotifyPage />} />
+                      {/* User Notify Urls */}
+                      <Route path="/notifications" element={<UserViewNotifyPage />} />
 
-                {/* HomePage */}
-                <Route path="/" element={<HomePage />} />
+                      {/* HomePage */}
+                      <Route path="/" element={<HomePage />} />
+
+                      {/* default Url */}
+                      <Route path="*" element={<HomePage />} />
+
+                   </>
+                   :
+                   <>
+                      {/* <Route path="/" element={<HomePage />} /> */}
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/login" element={<Login/>} />
+
+                      {/* default Url */}
+                      <Route path="*" element={<Login/>} />
+
+                   </>
+
+                }
+
+
 
 
             </Routes>

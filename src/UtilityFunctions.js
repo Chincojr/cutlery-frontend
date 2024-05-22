@@ -112,3 +112,18 @@ export function timeCompare(time1, time2) {
   // If hours are equal, compare the minutes
   return minutes1 > minutes2;
 }
+
+export function checkPasswordStrength(input) {
+  const regex = /^(?=.*[a-zA-Z0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9]).+$/;
+  return regex.test(input);
+}
+
+export function isValidURL(string) {
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
