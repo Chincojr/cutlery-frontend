@@ -25,11 +25,13 @@ const RequestNotification = () => {
         if (allowNotifyPermission === "granted") {
             setAllowNotify(true)
             
-            const checkUserNotifySubscribeObject = await RequestUserNotifySubscribeObject(cookies.uid,cookies.adminUid)
+            await askPermission(setAllowNotify)
 
-            if (checkUserNotifySubscribeObject === 404) {
-              await askPermission(setAllowNotify)
-            }
+            // const checkUserNotifySubscribeObject = await RequestUserNotifySubscribeObject(cookies.uid,cookies.adminUid)
+
+            // if (checkUserNotifySubscribeObject === 404) {
+            //   await askPermission(setAllowNotify)
+            // }
         }
       }
       async function checkAllowPeriodicSync (){
