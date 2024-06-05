@@ -1,9 +1,6 @@
 import React from 'react'
 import Header from '../components/Header/Header'
-import Sidebar from '../components/Sidebar/Sidebar'
 import visitStore from '../assets/visit-store.webp'
-import knifeShapen from '../assets/knife-sharpening.webp'
-import scissor from '../assets/scissor.webp'
 import gallery1 from '../assets/gallery1.webp'
 import gallery2 from '../assets/gallery2.webp'
 import gallery3 from '../assets/gallery3.webp'
@@ -12,7 +9,6 @@ import gallery5 from '../assets/gallery5.webp'
 import gallery6 from '../assets/gallery6.webp'
 import gallery7 from '../assets/gallery7.webp'
 import gallery8 from '../assets/gallery8.webp'
-
 
 
 const GalleryImages = [
@@ -28,12 +24,12 @@ const GalleryImages = [
 
 const HomePage = () => {
   return (
-    <div className='h-screen overflow-hidden grid grid-rows-[11%_89%] '>
-        <Header />
+    <div className='h-screen overflow-hidden flex flex-col '>
+        <Header displaySideBar={true} />
         <div className="grid h-full overflow-auto gap-7 ">
 
           {/* Hero */}
-          <div className="bg-hero bg-auto h-full relative ">
+          <div className="bg-hero bg-cover h-full relative ">
 
             <div className=" overlayBg inset-0 flex items-center h-full py-[10%]  ">
 
@@ -118,9 +114,8 @@ const HomePage = () => {
             <div className="grid grid-cols-3 sm:grid-cols-4 text-white gap-2 ">
                 {
                   GalleryImages.map((img,index) => {
-                    console.log(img);
                     return (
-                      <img src={img} alt="" className="" />
+                      <img key={index} src={img} alt="" className="" />
                     )
                   })
                 }

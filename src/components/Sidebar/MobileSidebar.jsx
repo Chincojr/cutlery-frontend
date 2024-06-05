@@ -3,7 +3,7 @@ import IconSelector from '../IconSelector/IconSelector'
 import Logo from '../Logo/Logo'
 import Sidebar from './Sidebar'
 
-const MobileSidebar = () => {
+const MobileSidebar = ({display}) => {
 
   const [navBar, setNavBar] = useState(false)
   const [open, setOpen] = useState(false)
@@ -14,7 +14,7 @@ const MobileSidebar = () => {
   }
 
   return (
-    <div className='lg:hidden'>
+    <div className={` ${display ? "" : " lg:hidden "}`}>
       <button onClick={HandleNavBar} className="outline-none bg-transparent">
         <IconSelector type={"Bars"} />
       </button>

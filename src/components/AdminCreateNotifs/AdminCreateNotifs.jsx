@@ -1,16 +1,30 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TodaysDate, isValidURL, timeCompare } from '../../UtilityFunctions'
 import DatePick from '../DatePicker/DatePick'
 import Input from '../Input/Input'
 import InputTextArea from '../Input/InputTextArea'
-import { adminNotifyErrMessage, notifsFormFormat } from '../../UtilityObjs'
+import { CreateNotificationMessage , EditNotificationMessage, adminNotifyErrMessage, allCookies, notifsFormFormat } from '../../UtilityObjs'
 import InputToggle from '../Input/InputToggle'
+import Loading from '../Loading/Loading'
+import Notify from '../Notify/Notify'
+import { RequestCreateNotification, RequestEditNotification } from '../../RequestFunction'
+import { useCookies } from 'react-cookie'
+import { useParams } from 'react-router-dom'
+import { DexieSpecificGet } from '../../DexieDb'
 
 
 const AdminCreateNotifs = () => {
 
-    let {presentDay,presentTime,presentMonth,presentDayOfMonth} = TodaysDate()
+  let {presentDay,presentTime} = TodaysDate()
+  let {notifyID} = useParams() 
+  const [cookies, setCookie, removeCookie] = useCookies(allCookies);
+  const [loading, setLoading] = useState()
+  const [notify, setNotify] = useState({
+    outcome: null,
+    message: "",
+    admin: cookies.adminUid
 
+  })
   const [notifInfo, setNotifInfo] = useState({
     title: "",
     caption: "",
@@ -70,12 +84,8 @@ const AdminCreateNotifs = () => {
             return false
             break;
     }
-
-
-
     setErr({...err, [name] : ""})
     return false
-
 }
 
   const HandleChange = (event) => {
@@ -89,7 +99,7 @@ const AdminCreateNotifs = () => {
     HandleInvalid(name,value)
   }
 
-  const HandleCreate = () => {
+  const HandleCreate = async() => {
 
     for (let key in notifInfo) {
         let check = HandleInvalid(key,notifInfo[key])
@@ -98,6 +108,48 @@ const AdminCreateNotifs = () => {
           return;
         }
     }
+
+    // change the selectTime and the selectDay to NULL if the automate buttoon is off
+    let modifiedNotifInfo = notifInfo
+    if (!notifInfo.automate) {
+        modifiedNotifInfo = {...notifInfo, selectDay : "", selectTime : ""}
+    }
+
+    console.log(JSON.stringify({obj:notifInfo,admin:cookies.adminUid}));
+    setLoading(true)
+    if (notifyID) {
+        var NotifRequest = await RequestEditNotification(modifiedNotifInfo,cookies.adminUid)
+        var message = EditNotificationMessage
+    } else {
+        var NotifRequest = await RequestCreateNotification(modifiedNotifInfo,cookies.adminUid)
+        var message = CreateNotificationMessage
+    }
+    setLoading(false)
+
+
+    if (NotifRequest) {
+        setNotify({
+            outcome: true,
+            message: message["success"]
+        })
+        window.location.href = "/admin/view/notify"
+    }else {
+        setNotify({
+            outcome: false,
+            message: message["failure"]
+        })
+    }
+
+    setTimeout(() => {
+        setNotify({
+            outcome: null,
+            message: ""
+          })
+      }, 2000);
+    console.log(modifiedNotifInfo);
+
+    console.log(notifInfo);
+
   }
 
   const HandleDiscard = () => {
@@ -118,6 +170,25 @@ const AdminCreateNotifs = () => {
     console.log({notifInfo});
 
   }
+
+
+  useEffect(() => {
+    
+    const GetSpecificNotify = async() => {
+        let specificNotify = await DexieSpecificGet("Notify",notifyID)
+        if (specificNotify && specificNotify.length === 1) {
+            setNotifInfo(specificNotify[0])
+        } else {
+            window.location.href = "/"
+        }
+
+    }
+    if (notifyID) {
+        GetSpecificNotify();
+    }
+    
+
+  }, [])
 
 
 
@@ -155,13 +226,13 @@ const AdminCreateNotifs = () => {
 
                 <div className="text-white w-full py-2 flex items-center justify-center gap-10">
                     <button onClick={HandleDiscard} className="rounded-[20px] outline-none uppercase accent p-2 px-4 text-[14px]">Discard</button>
-                    <button onClick={HandleCreate} className="rounded-[20px] outline-none uppercase primary p-2 px-4 text-[14px]">Create</button>
+                    <button onClick={HandleCreate} className="rounded-[20px] outline-none uppercase primary p-2 px-4 text-[14px]">{notifyID ? "Edit" : "Create"}</button>
                 </div>
                 
             </div>
         </div>
-
-        
+        <Notify outcome={notify.outcome} message={notify.message} />
+        <Loading loading={loading}  />
     </div>
   )
 }

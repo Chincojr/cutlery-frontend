@@ -3,8 +3,12 @@ import Header from '../components/Header/Header'
 import Sidebar from '../components/Sidebar/Sidebar'
 import IconSelector from '../components/IconSelector/IconSelector'
 import UserCreateReminder from '../components/UserCreateReminder/UserCreateReminder'
+import { useParams } from 'react-router-dom'
 
 const CreateReminderPage = () => {
+
+  let {reminderID} = useParams() 
+
   return (
     <div className='h-screen overflow-x-hidden'>
         <Header />
@@ -17,7 +21,7 @@ const CreateReminderPage = () => {
                   <IconSelector type={"Arrow"} />
               </a>
               <div className="font-bold text-2xl py-4 w-full text-center">
-                  Create new Reminder
+              {reminderID ? "Edit" : "Create New"} Reminder
               </div>
               <UserCreateReminder />
           </div>

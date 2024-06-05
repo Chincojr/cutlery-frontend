@@ -1,24 +1,29 @@
 import React, { useState } from 'react'
 import IconSelector from '../IconSelector/IconSelector'
+import { SearchInfoBasedOfType } from '../../UtilityFunctions';
 
-const SearchBar = ({searchInfo, setSearchInfo}) => {
+const SearchBar = ({searchInfo, setSearchInfo , type}) => {
   
-  const [completeSearchInfo, setCompleteSearchInfo] = useState(searchInfo)
+  const [unFilteredSearchInfo, setUnFilteredSearchInfo] = useState([])
   const [searchText, setSearchText] = useState("")
 
   const HandleBack = () => {
-    setSearchInfo(completeSearchInfo)
+    setSearchInfo(unFilteredSearchInfo)
     setSearchText("")
 
   }
 
   const HandleSearch = (event) => {
-    if (event.target.value === "") {
+    let {value} = event.target
+    if (value === "") {
         HandleBack()
         return
     }
-    setSearchText(event.target.value)
-    setSearchInfo([completeSearchInfo[0]])
+    setSearchText(value)
+    let info = unFilteredSearchInfo && unFilteredSearchInfo.length > 0 ? unFilteredSearchInfo : searchInfo;
+    let searchResult = SearchInfoBasedOfType(info,value,type)
+    setUnFilteredSearchInfo(searchResult.unfilteredInfo)
+    setSearchInfo(searchResult.filteredInfo)
   }
 
 

@@ -1,16 +1,17 @@
 export const RegisterFormErrMessage = {
     name: "Invalid Name",
     email: "Invalid Email",
-    emailDoesNotExist: "Email has been used",
+    emailAlreadyExist: "Email has been used",
     password: "Password Required",
     weakPassword: "Password is weak",
-    verifyCode: "Invalid verification code",
+    code: "Invalid verification code",
 }
 
 export const allCookies = [
   'verify',
   'log',
-  "uid"
+  "uid",
+  "adminUid",
 ]
 
 export const VerifyCodeMessage = {
@@ -19,8 +20,10 @@ export const VerifyCodeMessage = {
 }
 
 export const RegisterSubmitMessage = {
-  success : "Sign up successful",
-  failure : "Server Error"
+  200 : "Sign up successful",
+  500 : "Server Error",
+  401 : "Invalid verification code",
+  failure: "Error"
 }
 
 export const RegisterFormFormat = [
@@ -71,13 +74,12 @@ export const LoginFormFormat =  [
 export const LoginFormErrMessage = {
   email: "Invalid Email",
   password: "Password Required",
-  weakPassword: "Password is weak",
 }
   
 export const LoginSubmitMessage = {
-  success : "Login successful",
+  200 : "Login successful",
   failure : "Server Error",
-  unauthorized : "Invalid username or password"
+  401 : "Invalid username or password"
 }
 
 export const notifsFormFormat = [
@@ -116,10 +118,10 @@ export const eventFormFomart = [
       placeholder: "Enter Title..."
   },
   {
-      name : "caption",
-      label : "Caption",
+      name : "content",
+      label : "Content",
       type: "textarea",
-      placeholder: "Enter Caption...",
+      placeholder: "Enter content...",
       maxLength: 1500,
   }
 ]
@@ -141,7 +143,6 @@ export const reminderFormFormat = [
   {
       type:"date",
       date:"selectDay",
-      time:"selectTime",
       label:"Select Time",
       minDate: "today"
   },
@@ -155,7 +156,7 @@ export const reminderErrMessage = {
 
 export const adminEventErrMessage = {
   title : "Title is required",
-  image: "Image is required",
+  content: "The page content is required",
 }
 
 
@@ -166,7 +167,75 @@ export const adminNotifyErrMessage = {
   link : "This url is invalid"
 }
 
+export const CreateNotificationMessage = {
+  success : "Notification created",
+  failure : "Server Error"
+}
 
+export const EditNotificationMessage = {
+  success : "Notification edited succesfully",
+  failure : "Server Error"
+}
 
+export const CreateEventMessage = {
+  success : "Event created",
+  failure : "Server Error"
+}
 
+export const EditEventMessage = {
+  success : "Event edited succesfully",
+  failure : "Server Error"
+}
 
+export const CreateRemindersMessage = {
+  success : "Reminder created",
+  failure : "Server Error"
+}
+
+export const EditRemindersMessage = {
+  success : "Reminder edited succesfully",
+  failure : "Server Error"
+}
+
+export const UnavailableMessage = {
+  Reminders: {
+    iconType: "NoReminders",
+    text: "No reminders"
+  },
+  Events: {
+    iconType: "Event",
+    text: "No events"
+  },
+  Notify: {
+    iconType: "NoNotify",
+    text: "No Notification"
+  }
+}
+
+export const DeleteInfoMessage = {
+  success : "Deleted",
+  failure: "Error"
+}
+
+export const ForgetPasswordErrMessage = {
+  email: "Invalid email",
+  emailNotFound: "Email not found",
+  code: "Invalid code",
+  password: "Password required",
+  weakPassword: "Password is weak",
+  confirmPassword: "Password does not match"
+}
+
+export const ForgetEmailMessage = {
+  200: "OTP has been sent",
+  failure : "Server Error",
+  404 : "User account does not exist",
+  invalid: "A valid email is required"
+}
+
+export const ForgetPasswordSubmitMessage = {
+  200: "Password change Successful",
+  401: "Invalid OTP",
+  404: "Invalid Email address",
+  failure: "Server Error"
+}

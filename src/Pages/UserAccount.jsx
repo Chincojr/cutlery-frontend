@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar/Sidebar'
 import ProfilePicture from '../components/ProfilePicture/ProfilePicture'
 import Uploader from '../components/Uploader/Uploader'
 import Input from '../components/Input/Input'
+import { HandleLogOut } from '../UtilityFunctions'
 
 
 
@@ -12,9 +13,6 @@ const UserAccount = () => {
   const [userImage, setUserImage] = useState(false)
   const [userName, setUserName] = useState("")
 
-  const HandleLogOut = () => {
-
-  }
 
   const HandleNameChange = (event) => {
     setUserName(event.target.value)

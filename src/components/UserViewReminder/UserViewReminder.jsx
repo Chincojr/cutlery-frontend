@@ -1,111 +1,205 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import IconSelector from '../IconSelector/IconSelector'
 import dayjs from 'dayjs'
-import { getMonthNameWithSuffix } from '../../UtilityFunctions'
+import { SortPastTodayFuture, getMonthNameWithSuffix } from '../../UtilityFunctions'
 import SearchBar from '../SearchBar/SearchBar'
-import InputSelect from '../Input/InputSelect'
+import { DexieGet } from '../../DexieDb'
+import Unavailable from '../Unavailable/Unavailable'
+import Sort from '../Sort/Sort'
+import BulkDelete from '../BulkDelete/BulkDelete'
 
-const reminder = [
-    {
-        id: 1,
-        "title": "Retrun System",
-        "caption": "You can return",
-        "selectDay": "2024-04-29",
-        selectTime: "09:45",
-        repeat: false
-    },
-    {
-        id: 2,
-        "title": "Retrun ",
-        "caption": "You can return Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia sunt commodi incidunt quaerat, libero dolor iste quisquam laudantium, atque reiciendis harum! Fuga beatae, perspiciatis officia porro pariatur consequuntur expedita adipisci.",
-        "selectDay": "2024-04-29",
-        selectTime: "09:45",
-        repeat: "day",
-        day: 4,
-    },
-    {
-        id: 3,
-        "title": "Retrun System",
-        "caption": "You can return",
-        "selectDay": "2024-04-29",
-        selectTime: "09:45",
-        repeat: false
-    },
-    {
-        id: 4,
-        "title": "Retrun ",
-        "caption": "You can return Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia sunt commodi incidunt quaerat, libero dolor iste quisquam laudantium, atque reiciendis harum! Fuga beatae, perspiciatis officia porro pariatur consequuntur expedita adipisci.",
-        "selectDay": "2024-04-29",
-        selectTime: "09:45",
-        repeat: "day",
-        day: 4,
-    },
-]
+const reminderSortFunctions = ["Title","Date created","Date modified","Alert Date"]
 
 const UserViewReminder = () => {
 
+  const [reminders, setReminders] = useState([])
+  const [bulkDelete, setBulkDelete] = useState([])
+  const [arrange, setArrange] = useState({
+    past : [],
+    today : [],
+    future : []
+  })
 
-  const [reminders, setReminders] = useState(reminder)
-  const [sortBy, setSortBy ] = useState("")
+  useEffect(() => {
+    
+    if ( reminders && reminders.length > 0 ) {
+        let {past,today,future} =   SortPastTodayFuture(reminders) 
+        setArrange({past,today,future})
+    }
 
-  const  HandleApply = () => {
+    console.log("This is the arranged reminders: ", arrange);
 
+  }, [reminders])
+
+  useEffect(() => {
+
+    const GetReminders = async() => {
+        let userReminders = await DexieGet("Reminders") 
+        if (userReminders) {
+            console.log(userReminders);
+            setReminders(userReminders)
+        }
+    }
+
+    GetReminders()
+  
+  }, [])
+
+  const HandleBulk = (event) => {
+    let { value, name} = event.target;
+
+    if (name === "all") {
+        setBulkDelete(["all"])
+        return
+    }
+
+    if (bulkDelete.includes(name)) {
+        let newBulkEdit = bulkDelete.filter((val) => val !== name )
+        setBulkDelete(newBulkEdit)
+    }else {
+        if (bulkDelete.includes("all")) {
+            setBulkDelete([name])
+        } else {
+            setBulkDelete([...bulkDelete,name])
+        }
+        
+    }
   }
+
+
+  
+
 
   return (
     <div className=' w-full flex flex-col items-center gap-2 py-2 h-full overflow-hidden  ' >
 
-        <div className="flex w-full justify-end">
+        <div className="flex px-2 w-full justify-between">
+            <BulkDelete bulkDelete={bulkDelete} info={reminders} type={"Reminders"} />
             <div className="sm:w-[350px] w-full">
-                <SearchBar searchInfo={reminders} setSearchInfo={setReminders} />
+                <SearchBar searchInfo={reminders && reminders.length > 0 ? reminders : []}  setSearchInfo={setReminders} type={"Reminders"} />
             </div>
         </div>
 
 
-        <div className="w-full flex sm:justify-between items-center gap-2 bg-white">
-            <div className=" gridr invisible grid-cols-1 gap-2 h-full">
-                <button className="w-full ">
-                    <IconSelector type={"Delete"} />
-                </button>
-                <div className=" invisible ">
-                    
-                </div>
-            </div>
+        <Sort setInfo={setReminders} info={reminders} sortFunctions={reminderSortFunctions} />
 
-            <div className="grid grid-cols-3 sm:flex gap-2 items-center justify-center w-fit">
-                <div className="w-fit ">Sort By :</div>
-                <InputSelect inputName={"order"} values={["Ascending","Descending"]} />
-                <InputSelect inputName={"order"} values={["Name","Date created","Date modified","Alert Time"]} />
-                <button onClick={HandleApply} className="rounded outline-none uppercase primary p-2 px-4 text-[14px] text-white col-span-3  ">Filter</button>
-            </div>
-        </div>
-
-        <div className="flex flex-col gap-2  h-full overflow-auto px-2  ">
+        <div className="flex flex-col gap-2  h-full overflow-auto px-2 w-full  ">
             {
-                reminders.map((obj,index) => {
+                reminders && reminders.length > 0 
+                ?
+                <div className='flex flex-col gap-2' >
+                    {
+                        arrange.past && arrange.past.length > 0 
+                        ?
+                        <>
+                            <div className="font-bold">Past</div>
+                            {
+                                arrange.past.map((obj,index) => {
+                                    let dateObj = dayjs(`${obj.selectDay}T00:00`)
+                                    let { monthName,dayWithSuffix } = getMonthNameWithSuffix(dateObj.$M,dateObj.$D)
+                                    return (
+                                        <div key={index} className=' neutral px-2 py-2 rounded  w-full grid grid-cols-[10%_90%] max-w-[700px] '>
+                                            <div className="">
+                                                <input type="checkbox" name={obj.systemID} id="" checked={
+                                                        bulkDelete && bulkDelete.includes(obj.systemID) ? 
+                                                        true 
+                                                        : bulkDelete && bulkDelete.includes("all") ? 
+                                                        true 
+                                                        : false
+                                                    } onChange={HandleBulk} />                            
+                                            </div>
+                                            <a href={`/edit/reminder/${obj.systemID}`} className="text-[12px] ">
+                                                <div className="font-bold primaryText">{obj.title}</div>
+                                                <div className=" font- ">{obj.caption}</div>
+                                                <div className=" font-bold ">{monthName} {dayWithSuffix}</div>
+                                                <div className={`${obj.repeat ? "flex items-center gap-1" : "hidden"} `}>
+                                                    <IconSelector type={"Repeat"} size={15}/>
+                                                    Every {obj.repeat}
+                                                </div>
+                                            </a>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </>
+                        :<></>
+                    }
 
-                    let dateObj = dayjs(`${obj.selectDay}T${obj.selectTime}`)
-                    let { monthName,dayWithSuffix } = getMonthNameWithSuffix(dateObj.$M,dateObj.$D)
+                    {
+                        arrange.today && arrange.today.length > 0 
+                        ?
+                        <>
+                            <div className="font-bold">Today</div>
+                            {
+                                arrange.today.map((obj,index) => {
+                                    let dateObj = dayjs(`${obj.selectDay}T00:00`)
+                                    let { monthName,dayWithSuffix } = getMonthNameWithSuffix(dateObj.$M,dateObj.$D)
+                                    return (
+                                        <div key={index} className=' neutral px-2 py-2 rounded  w-full grid grid-cols-[10%_90%] max-w-[700px] '>
+                                            <div className="">
+                                                <input type="checkbox" name={obj.systemID} id="" checked={
+                                                        bulkDelete && bulkDelete.includes(obj.systemID) ? 
+                                                        true 
+                                                        : bulkDelete && bulkDelete.includes("all") ? 
+                                                        true 
+                                                        : false
+                                                    } onChange={HandleBulk} />                            
+                                            </div>
+                                            <a href={`/edit/reminder/${obj.systemID}`} className="text-[12px] ">
+                                                <div className="font-bold primaryText">{obj.title}</div>
+                                                <div className=" font- ">{obj.caption}</div>
+                                                <div className=" font-bold ">{monthName} {dayWithSuffix}</div>
+                                                <div className={`${obj.repeat ? "flex items-center gap-1" : "hidden"} `}>
+                                                    <IconSelector type={"Repeat"} size={15}/>
+                                                    Every {obj.repeat}
+                                                </div>
+                                            </a>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </>
+                        :<></>
+                    }
 
-                    console.log(monthName,dayWithSuffix);
-
-                    return (
-                        <div className=' neutral px-2 py-2 rounded  w-full grid grid-cols-[10%_90%] max-w-[700px] '>
-                            <div className="">
-                                <input type="checkbox" name={obj.id} id="" />
-                            </div>
-                            <div className="text-[12px] ">
-                                <div className="font-bold primaryText">{obj.title}</div>
-                                <div className=" font- ">{obj.caption}</div>
-                                <div className=" font-bold ">{monthName} {dayWithSuffix}</div>
-                                <div className={`${obj.repeat ? "flex items-center gap-1" : "hidden"} `}>
-                                    <IconSelector type={"Repeat"} size={15}/>
-                                    Every {obj.repeat}
-                                </div>
-                            </div>
-                        </div>
-                    )
-                })
+                    {
+                        arrange.future && arrange.future.length > 0 
+                        ?
+                        <>
+                            <div className="font-bold">Future</div>
+                            {
+                                arrange.future.map((obj,index) => {
+                                    let dateObj = dayjs(`${obj.selectDay}T00:00`)
+                                    let { monthName,dayWithSuffix } = getMonthNameWithSuffix(dateObj.$M,dateObj.$D)
+                                    return (
+                                        <div key={index} className=' neutral px-2 py-2 rounded  w-full grid grid-cols-[10%_90%] max-w-[700px] '>
+                                            <div className="">
+                                                <input type="checkbox" name={obj.systemID} id="" checked={
+                                                        bulkDelete && bulkDelete.includes(obj.systemID) ? 
+                                                        true 
+                                                        : bulkDelete && bulkDelete.includes("all") ? 
+                                                        true 
+                                                        : false
+                                                    } onChange={HandleBulk} />                            
+                                            </div>
+                                            <a href={`/edit/reminder/${obj.systemID}`} className="text-[12px] ">
+                                                <div className="font-bold primaryText">{obj.title}</div>
+                                                <div className=" font- ">{obj.caption}</div>
+                                                <div className=" font-bold ">{monthName} {dayWithSuffix}</div>
+                                                <div className={`${obj.repeat ? "flex items-center gap-1" : "hidden"} `}>
+                                                    <IconSelector type={"Repeat"} size={15}/>
+                                                    Every {obj.repeat}
+                                                </div>
+                                            </a>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </>
+                        :<></>
+                    }
+                </div>
+                : <Unavailable type={"Reminders"} />
             }
         </div>
     </div>

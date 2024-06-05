@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import IconSelector from '../IconSelector/IconSelector'
 
-const ProfilePicture = ({size}) => {
+const ProfilePicture = ({size,link}) => {
     
   const [userImage, setUserImage] = useState(false)
 
@@ -11,7 +11,7 @@ const ProfilePicture = ({size}) => {
             userImage ? (
                 <></>
             ) : (
-                <a href="/user-profile" className="">
+                <a href={`${link ? link : '/user-profile'}`} className="">
                     <IconSelector type={"User"} size={size} />
                 </a>
             )

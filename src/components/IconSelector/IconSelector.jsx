@@ -13,6 +13,10 @@ import { MdOutlineDelete } from "react-icons/md";
 import { HiOutlineClock } from "react-icons/hi2";
 import { LuBellPlus } from "react-icons/lu";
 import { BiCalendarPlus } from "react-icons/bi";
+import { CiLogin } from "react-icons/ci";
+import { LuAlarmClockOff } from "react-icons/lu";
+import { MdEventNote } from "react-icons/md";
+import { IoNotificationsOffOutline } from "react-icons/io5";
 
 
 
@@ -78,6 +82,22 @@ const IconSelector = ({type,size,className,color}) => {
     case "CreateEvent":
       return (
         <BiCalendarPlus  size={size} color={color} className={className} />
+      )
+    case "Login":
+      return (
+        <CiLogin   size={size} color={color} className={className} />
+      )
+    case "NoReminders":
+      return (
+        <LuAlarmClockOff size={size} color={color} className={className} />
+      )
+    case "Event":
+      return (
+        <MdEventNote size={size} color={color} className={className} />
+      )
+    case "NoNotify":
+      return (
+        <IoNotificationsOffOutline  size={size} color={color} className={className} />
       )
     default:
       return (

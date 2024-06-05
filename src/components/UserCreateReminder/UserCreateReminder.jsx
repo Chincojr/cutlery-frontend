@@ -1,26 +1,51 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Input from '../Input/Input'
 import InputTextArea from '../Input/InputTextArea'
-import { TodaysDate, getMonthNameWithSuffix, timeCompare } from '../../UtilityFunctions'
+import { TodaysDate } from '../../UtilityFunctions'
 import DatePick from '../DatePicker/DatePick'
 import InputToggle from '../Input/InputToggle'
-import { reminderFormFormat,reminderErrMessage } from '../../UtilityObjs'
+import { reminderFormFormat,reminderErrMessage, allCookies, CreateRemindersMessage, EditRemindersMessage } from '../../UtilityObjs'
+import Notify from '../Notify/Notify'
+import Loading from '../Loading/Loading'
+import { useCookies } from 'react-cookie'
+import { RequestCreateReminder, RequestEditReminder } from '../../RequestFunction'
+import { useParams } from 'react-router-dom'
+import { DexieSpecificGet } from '../../DexieDb'
 
-
+const RepeatFunctions = {
+    day:{
+        singular : "day",
+        plural: "days"
+    },
+    week:{
+        singular : "week",
+        plural: "weeks"
+    },
+    year:{
+        singular : "year",
+        plural: "years"
+    },
+    month:{
+        singular : "month",
+        plural: "months"
+    }
+}
 
 const UserCreateReminder = () => {
 
-
-    let {presentDay,presentTime,presentMonth,presentDayOfMonth} = TodaysDate()
-
-    let { monthName,dayWithSuffix } = getMonthNameWithSuffix(presentMonth,presentDayOfMonth)
-
+    let {reminderID} = useParams() 
+    const [loading, setLoading] = useState()
+    const [notify, setNotify] = useState({
+      outcome: null,
+      message: ""
+    })
+    const [cookies, setCookie, removeCookie] = useCookies(allCookies);
+    let {presentDay} = TodaysDate()
     const [reminderInfo, setReminderInfo] = useState({
         title: "",
         caption: "",
         selectDay: presentDay,
-        selectTime: presentTime,
-        repeat : false,
+        repeatState : false,
         week: 1,
         day: 1,
         dayOfWeek : "",
@@ -32,9 +57,7 @@ const UserCreateReminder = () => {
         title: "",
         caption: "",
         selectDay: "",
-        selectTime: "",
     })
-
 
     const HandleInvalid = (name,value) => {
         switch (name) {
@@ -49,109 +72,51 @@ const UserCreateReminder = () => {
                     setErr({...err, [name] : reminderErrMessage[name]})
                     return true
                 }
-
-                if (value !== presentDay ) {
-                    setErr({...err, ["selectTime"] : ""})
-                    return true
-                }
-
-                break;   
-            case "selectTime":
-                if (reminderInfo.selectDay === presentDay) {
-                    let checkTime = timeCompare(value,presentTime)
-                    if ( !checkTime  ) {
-                        setErr({...err, [name] : reminderErrMessage[name]})
-                        return true
-                    }
-                }
-
-                
                 break;   
             case "day":
-
+                value = Number(value)
                 if ( value > 365  ) {
                     setReminderInfo({
                         ...reminderInfo,
                         [name]: 365
                     })
                 }
-
-                if ( value < 1  ) {
-                    setReminderInfo({
-                        ...reminderInfo,
-                        [name]: 1
-                    })
-                }
-                
                 break;   
-
             case "week":
-
+                value = Number(value)
                 if ( value > 52  ) {
                     setReminderInfo({
                         ...reminderInfo,
                         [name]: 52
                     })
                 }
-
-                if ( value < 1  ) {
-                    setReminderInfo({
-                        ...reminderInfo,
-                        [name]: 1
-                    })
-                }
-                
                 break;   
-
             case "month":
-
                 if ( value > 12  ) {
                     setReminderInfo({
                         ...reminderInfo,
                         [name]: 12
                     })
                 }
-
-                if ( value < 1  ) {
-                    setReminderInfo({
-                        ...reminderInfo,
-                        [name]: 1
-                    })
-                }
-                
                 break;  
-
-            case "month":
-
-                if ( value > 12  ) {
+            case "year":
+                value = Number(value)
+                if ( value > 10  ) {
                     setReminderInfo({
                         ...reminderInfo,
-                        [name]: 12
+                        [name]: 10
                     })
                 }
-
-                if ( value < 1  ) {
-                    setReminderInfo({
-                        ...reminderInfo,
-                        [name]: 1
-                    })
-                }
-                
                 break;   
-
             default:
                 return false
                 break;
         }
-
-
-
         setErr({...err, [name] : ""})
         return false
 
     }
 
-  
     const HandleChange = (event) => {
         const { name, value } = event.target; 
         setReminderInfo({
@@ -169,7 +134,7 @@ const UserCreateReminder = () => {
         });  
     }
 
-    const HandleCreate = () => {
+    const HandleCreate = async() => {
         let formErr = false
 
         for (let key in reminderInfo) {
@@ -180,7 +145,64 @@ const UserCreateReminder = () => {
             }
         }
 
-        console.log("success");
+        let modifiedReminderInfo 
+        if (typeof reminderInfo.repeatState === "boolean") {
+            modifiedReminderInfo = {
+                title :reminderInfo.title,
+                caption: reminderInfo.caption,
+                selectDay: reminderInfo.selectDay,
+                admin: cookies.uid,
+                repeatState:false
+            }
+        } else {
+            modifiedReminderInfo = {
+                title :reminderInfo.title,
+                caption: reminderInfo.caption,
+                selectDay: reminderInfo.selectDay,
+                admin: cookies.uid,
+                repeatState:reminderInfo.repeatState,
+                [reminderInfo.repeatState]:reminderInfo[reminderInfo.repeatState]
+            }
+        }
+
+        
+
+
+
+        console.log(JSON.stringify({obj:modifiedReminderInfo,admin:cookies.uid}));
+        setLoading(true)
+        if (reminderID) {
+            modifiedReminderInfo = {...modifiedReminderInfo,systemID :reminderInfo.systemID}
+            let admin = cookies.uid ? cookies.uid : cookies.adminUid;
+            var ReminderRequest = await RequestEditReminder(modifiedReminderInfo,admin)
+            var message = EditRemindersMessage
+        } else {
+            var ReminderRequest = await RequestCreateReminder(modifiedReminderInfo)
+            var message = CreateRemindersMessage
+        }
+        setLoading(false)
+
+        if (ReminderRequest) {
+            setNotify({
+                outcome: true,
+                message: message["success"]
+            })
+            window.location.href = "/view/reminders"
+        }else {
+            setNotify({
+                outcome: false,
+                message: message["failure"]
+            })
+        }
+    
+        setTimeout(() => {
+            setNotify({
+                outcome: null,
+                message: ""
+              })
+          }, 2000);
+
+        console.log(modifiedReminderInfo);
     }
 
     const HandleDiscard = () => {
@@ -188,8 +210,7 @@ const UserCreateReminder = () => {
             title: "",
             caption: "",
             selectDay: presentDay,
-            selectTime: presentTime,
-            repeat : false,
+            repeatState : false,
             week: 1,
             day: 1,
             dayOfWeek : "",
@@ -202,9 +223,37 @@ const UserCreateReminder = () => {
             title: "",
             caption: "",
             selectDay: "",
-            selectTime: "",
         })
     }
+
+    const HandleBlur = (event) => {
+        let {value,name} = event.target
+
+        if (!value || Number(value) < 1) {
+            setReminderInfo({
+                ...reminderInfo,
+                [name]: 1
+            })
+        }
+
+    }
+
+    useEffect(() => {
+    
+        const GetSpecificReminder = async() => {
+            let specificReminder = await DexieSpecificGet("Reminders",reminderID)
+            if (specificReminder && specificReminder.length === 1) {
+                setReminderInfo(specificReminder[0])
+            } else {
+                window.location.href = "/"
+            }
+    
+        }
+        if (reminderID) {
+            GetSpecificReminder();
+        }
+    
+    }, [])
 
     
   return (
@@ -223,7 +272,7 @@ const UserCreateReminder = () => {
                                     obj.type === "date" ? (
                                         <>
                                             <div className="w-full border-[1px] my-3 "></div>
-                                            <DatePick datename={obj.date} timename={obj.time} labelText={obj.label} valueDate={reminderInfo[obj.date]} valueTime={reminderInfo[obj.time]} handleChange={HandleChange} errorDay={err[obj.date]} errorTime={err[obj.time]} minDate={obj.minDate === "today" ? presentDay : reminderInfo[obj.minDate]} minTime={obj.minTime} />
+                                            <DatePick datename={obj.date}  labelText={obj.label} valueDate={reminderInfo[obj.date]}handleChange={HandleChange} errorDay={err[obj.date]} minDate={obj.minDate === "today" ? presentDay : reminderInfo[obj.minDate]} />
                                         </>
                                     ) :
                                     (
@@ -237,49 +286,27 @@ const UserCreateReminder = () => {
 
                 <div className="px-2 ">
 
-                    <InputToggle labelText={"Repeat"} inputName={"repeat"} value={reminderInfo["repeat"]}  handleChange={HandleChange} />
+                    <InputToggle labelText={"Repeat"} inputName={"repeatState"} value={reminderInfo["repeatState"]}  handleChange={HandleChange} />
 
-                    <div className={` ${reminderInfo["repeat"] ? "flex" : "hidden"} pl-4 py-2 flex-col gap-2`}>
-                        <div className="">
-                            <div className=" flex gap-2 items-center ">
-                                <input type="radio" name="repeat" id="day" checked={reminderInfo.repeat === "day" ? true : false} onChange={HandleRepeat} className=' ' />
-                                <label htmlFor="day" className="">Every <input type="number" name="day" id="" value={reminderInfo.day} onChange={HandleChange}  className={` ${reminderInfo.repeat === "day" ? "" : "hidden"} w-[40px] border-b-[1px] border-black text-center outline-none bg-transparent `}/> day</label>
-                            </div> 
-                            <div className="px-5">
-                                <div className={`${reminderInfo.repeat === "day" ? "" : "hidden"} text-[12px] italic font-semibold primaryText `}>This reminder will repeat every {reminderInfo.day} {Number(reminderInfo.day ) > 1 ? "days" : "day" }</div>
-                            </div>
+                    <div className={` ${reminderInfo["repeatState"] ? "flex" : "hidden"} pl-4 py-2 flex-col gap-2`}>
+                        {
 
-                        </div>
+                            Object.keys(RepeatFunctions).map((func, index) => {
+                                return(
+                                    <div key={index} className="">
+                                        <div className=" flex gap-2 items-center ">
+                                            <input type="radio" name="repeatState" id={func} checked={reminderInfo.repeatState === func ? true : false} onChange={HandleRepeat} className=' ' />
+                                            <label htmlFor={func} className="">Every <input type="number" name={func} id="" value={reminderInfo[func]} onChange={HandleChange} onBlur={HandleBlur} className={` ${reminderInfo.repeatState === func ? "" : "hidden"} w-[40px] border-b-[1px] border-black text-center outline-none bg-transparent `}/> {func}</label>
+                                        </div> 
+                                        <div className="px-5">
+                                            <div className={`${reminderInfo.repeatState === func ? "" : "hidden"} text-[12px] italic font-semibold primaryText `}>This reminder will repeat every {reminderInfo[func]} {Number(reminderInfo[func] ) > 1 ? RepeatFunctions[func].plural : RepeatFunctions[func].singular }</div>
+                                        </div>
+            
+                                    </div>
+                                )
+                            })
 
-                        <div className="">
-                            <div className=" flex gap-2 items-center ">
-                                <input type="radio" name="repeat" id="week" checked={reminderInfo.repeat === "week" ? true : false} onChange={HandleRepeat} className=' ' />
-                                <label htmlFor="week" className="">Every <input type="number" name="week" id="" value={reminderInfo.week} onChange={HandleChange}  className={` ${reminderInfo.repeat === "week" ? "" : "hidden"} w-[40px] border-b-[1px] border-black text-center outline-none bg-transparent `}/> week</label>
-                            </div> 
-                            <div className="px-5">
-                                <div className={`${reminderInfo.repeat === "week" ? "" : "hidden"} text-[12px] italic font-semibold primaryText `}>This reminder will repeat every {Number(reminderInfo.week) > 1 ? `${reminderInfo.week} weeks` : "week"} on {monthName} {dayWithSuffix} </div>
-                            </div>
-                        </div>
-
-                        <div className="">
-                            <div className=" flex gap-2 items-center ">
-                                <input type="radio" name="repeat" id="month" checked={reminderInfo.repeat === "month" ? true : false} onChange={HandleRepeat} className=' ' />
-                                <label htmlFor="month" className="">Every <input type="number" name="month" id="" value={reminderInfo.month} onChange={HandleChange}  className={` ${reminderInfo.repeat === "month" ? "" : "hidden"} w-[40px] border-b-[1px] border-black text-center outline-none bg-transparent `}/> month</label>
-                            </div> 
-                            <div className="px-5">
-                                <div className={`${reminderInfo.repeat === "month" ? "" : "hidden"} text-[12px] italic font-semibold primaryText `}>This reminder will repeat every {Number(reminderInfo.month) > 1 ? `${reminderInfo.month} months` : "month"} on {monthName} {dayWithSuffix} </div>
-                            </div>
-                        </div>
-
-                        <div className="">
-                            <div className=" flex gap-2 items-center ">
-                                <input type="radio" name="repeat" id="year" checked={reminderInfo.repeat === "year" ? true : false} onChange={HandleRepeat} className=' ' />
-                                <label htmlFor="year" className="">Every <input type="number" name="year" id="" value={reminderInfo.year} onChange={HandleChange}  className={` ${reminderInfo.repeat === "year" ? "" : "hidden"} w-[40px] border-b-[1px] border-black text-center outline-none bg-transparent `}/> year</label>
-                            </div> 
-                            <div className="px-5">
-                                <div className={`${reminderInfo.repeat === "year" ? "" : "hidden"} text-[12px] italic font-semibold primaryText `}>This reminder will repeat every {Number(reminderInfo.year) > 1 ? `${reminderInfo.year} years` : "year"} on {monthName} {dayWithSuffix} </div>
-                            </div>
-                        </div>
+                        }
                     </div>
 
 
@@ -293,7 +320,8 @@ const UserCreateReminder = () => {
                 
             </div>
         </div>
-        
+        <Notify outcome={notify.outcome} message={notify.message} />
+        <Loading loading={loading}  />
                 
     </div>
   )

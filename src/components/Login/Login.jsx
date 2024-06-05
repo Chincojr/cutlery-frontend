@@ -2,15 +2,15 @@ import React, { useState } from 'react'
 import Notify from '../Notify/Notify'
 import { LoginFormErrMessage, LoginFormFormat, LoginSubmitMessage, allCookies } from '../../UtilityObjs'
 import Input from '../Input/Input'
-// import { HandleUserLogin } from '../../RequestFunction'
 import { useCookies } from 'react-cookie'
 import Loading from '../Loading/Loading'
 import Logo from '../Logo/Logo'
 import { isValidEmail} from '../../UtilityFunctions'
+import { RequestUserLogin } from '../../RequestFunction'
 
 
 
-const Login = () => {
+const Login = ({type}) => {
 
   const [cookies, setCookie, removeCookie] = useCookies(allCookies);
   const [loading, setLoading] = useState(false)
@@ -46,7 +46,6 @@ const Login = () => {
   
 
   const HandleInvalid =  (name,value) => {
-
     switch (name) {
         case "email":
             if (!isValidEmail(value)) {
@@ -59,38 +58,69 @@ const Login = () => {
                 setErr({...err, [name] : LoginFormErrMessage[name]})
                 return true
             }
-
-            if ( value.length < 8 ) {
-              setErr({...err, [name] : LoginFormErrMessage["weakPassword"]})
-              return true
-            }
-            
             break;    
         default:
             return false
             break;
     }
-
-
-
     setErr({...err, [name] : ""})
     return false
-
 }
 
 const HandleLogin = async () => {
 
-
-  let formErr = false
-
+  // check if the input is valid
   for (let key in loginInfo) {
       let formValueTest = HandleInvalid(key,loginInfo[key])
       if (formValueTest) {
-        formErr = true;
         console.log(key,formValueTest);
-        break;
+        return;
       }
   }
+
+  // verify the input
+  setLoading(true)
+  let verifyLoginInfo = await RequestUserLogin(loginInfo.email,loginInfo.password,type)
+  setLoading(false)
+
+  switch (verifyLoginInfo.status) {
+      case 200:      
+        console.log(verifyLoginInfo);              
+        setNotify({
+            outcome: true,
+            message: LoginSubmitMessage[verifyLoginInfo.status]
+        })
+        setCookie("log",verifyLoginInfo.data.log,{path: "/", maxAge:604800})
+        if (type && type === "Admin") {
+          setCookie("adminUid",verifyLoginInfo.data.adminUid,{path: "/", maxAge:604800})
+          removeCookie("uid")
+        } else {
+          setCookie("uid",verifyLoginInfo.data.uid,{path: "/", maxAge:604800})
+          removeCookie("adminUid")
+        }
+        window.location.href = "/"
+        break;
+    case 401:
+        setNotify({
+            outcome: false,
+            message: LoginSubmitMessage[verifyLoginInfo.status]
+        })
+        setErr({...err,code:LoginSubmitMessage[verifyLoginInfo.status]})
+        break;
+    default:
+        setNotify({
+            outcome: false,
+            message: LoginSubmitMessage["failure"]
+        })
+        break;
+  }
+
+  setTimeout(() => {
+    setNotify({
+        outcome: null,
+        message: ""
+      })
+  }, 2000);
 
 }
 
@@ -99,7 +129,9 @@ const HandleLogin = async () => {
         <div className="bg-white rounded flex flex-col overflow-hidden h-fit py-4 w-full max-w-[500px] items-center gap-2 justify-center  ">
             <div className="max-w-[350px] w-full flex items-center flex-col gap-2 ">
                 <div className="w-[100px] ">
-                    <Logo />
+                  <a href="/" className="">
+                      <Logo />
+                  </a>
                 </div>
             </div>
             <div className="flex flex-col gap-2 overflow-auto w-full max-w-[350px] justify- ">
@@ -113,15 +145,18 @@ const HandleLogin = async () => {
                     )
                   })
                 }
-                <div className=" text-[12px] py-2 text-center">
-                    Already have an account
-                    <a href='/register' className="pl-1 underline">
-                        Register
-                    </a>
-                </div>
+                <a href={`${type ? "/admin/forget-password" : "/forget-password"}`} className="underline lowercase text-[12px] px-2 text-end">
+                    Forget Password
+                </a>                
                 <div className="text-white w-full text-center">
                     <button onClick={HandleLogin} className="rounded-[20px] outline-none uppercase primary p-2 px-4 text-[14px]">Sign in</button>
                 </div>
+                <div className=" text-[12px] py-2 text-center">
+                    Do not have an account
+                    <a href='/register' className="pl-1 underline">
+                        Register
+                    </a>
+                </div>                
             </div>
         <Notify outcome={notify.outcome} message={notify.message} />
         <Loading loading={loading} />

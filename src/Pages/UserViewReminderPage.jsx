@@ -6,7 +6,7 @@ import UserViewReminder from '../components/UserViewReminder/UserViewReminder'
 
 const ViewReminderPage = () => {
   return (
-    <div className='h-screen overflow-hidden grid grid-rows-[11%_89%] '>
+    <div className='h-screen overflow-hidden flex flex-col '>
         <Header />
         <div className="grid lg:grid-cols-[20%_80%] h-full  ">
             <div className=" hidden lg:flex ">

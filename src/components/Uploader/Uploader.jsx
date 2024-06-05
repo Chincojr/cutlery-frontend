@@ -1,25 +1,18 @@
 import React, { useState, useRef } from 'react';
 import IconSelector from '../IconSelector/IconSelector';
+import { ConvertImageInfoToDisplay } from '../../UtilityFunctions';
 
 function Uploader({size,color,setSelectedFile,uploadType,multiple}) {
 
     const fileInputRef = useRef(null);
 
-    const handleFileChange = (event) => {
+    const handleFileChange = async(event) => {
         if (multiple) {
             setSelectedFile(event.target.files)
             return
         }
-        const file = event.target.files[0];
-        const reader = new FileReader();
-    
-        reader.onload = () => {
-          setSelectedFile(reader.result);
-        };
-    
-        if (file) {
-          reader.readAsDataURL(file);
-        }
+        let image = await ConvertImageInfoToDisplay(event.target.files[0]);
+        setSelectedFile(image);
         event.target.value = null; 
     };
 
