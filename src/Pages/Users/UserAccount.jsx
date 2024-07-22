@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import Header from '../components/Header/Header'
-import Sidebar from '../components/Sidebar/Sidebar'
-import ProfilePicture from '../components/ProfilePicture/ProfilePicture'
-import Uploader from '../components/Uploader/Uploader'
-import Input from '../components/Input/Input'
-import { HandleLogOut } from '../UtilityFunctions'
+import Header from '../../components/Header/Header'
+import Sidebar from '../../components/Sidebar/Sidebar'
+import ProfilePicture from '../../components/ProfilePicture/ProfilePicture'
+import Uploader from '../../components/Uploader/Uploader'
+import Input from '../../components/Input/Input'
+import { HandleLogOut } from '../../UtilityFunctions'
 
 
 

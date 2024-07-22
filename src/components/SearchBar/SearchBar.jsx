@@ -2,14 +2,17 @@ import React, { useState } from 'react'
 import IconSelector from '../IconSelector/IconSelector'
 import { SearchInfoBasedOfType } from '../../UtilityFunctions';
 
-const SearchBar = ({searchInfo, setSearchInfo , type}) => {
+const SearchBar = ({searchInfo, setSearchInfo , type, noBorder,otherFunctions}) => {
   
   const [unFilteredSearchInfo, setUnFilteredSearchInfo] = useState([])
   const [searchText, setSearchText] = useState("")
 
   const HandleBack = () => {
-    setSearchInfo(unFilteredSearchInfo)
-    setSearchText("")
+    // setSearchInfo(unFilteredSearchInfo)
+    // setSearchText("")
+    if (otherFunctions) {
+      otherFunctions()
+    }
 
   }
 
@@ -34,7 +37,7 @@ const SearchBar = ({searchInfo, setSearchInfo , type}) => {
                 <IconSelector type={"Arrow"} size={25} />
             </button>
         </div>
-        <div className="flex relative border-[2px] border-black px-2 py-1  w-full  rounded-[20px] items-center">
+        <div className={`flex relative  ${noBorder ? "" : "border-black border-[2px]" } px-2 py-1  w-full  rounded-[20px] items-center`}>
             <label htmlFor='search' className="">
                 <IconSelector type={"Search"} size={25} />
             </label>

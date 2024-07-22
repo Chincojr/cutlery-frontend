@@ -4,6 +4,7 @@ import { allCookies } from '../../UtilityObjs'
 import { useCookies } from 'react-cookie'
 
 const userSideBarFormat = [
+
   {
     name : "Home",
     url : "/",
@@ -19,10 +20,30 @@ const userSideBarFormat = [
     url : "/view/reminders",
     icon : "Reminder",
   },
+  {
+    name : "Contact",
+    url : "/contact",
+    icon : "Msgs",
+  },
 
 ]
 
 const adminSideBarFormat = [
+  {
+    name : "Home",
+    url : "/",
+    icon : "Home",
+  },
+  {
+    name : "Events",
+    url : "/view/events",
+    icon : "Event",
+  },
+  {
+    name : "Reminders",
+    url : "/view/reminders",
+    icon : "Reminder",
+  },
   {
     name : "Admin Notification",
     url : "/admin/view/notify",
@@ -33,6 +54,11 @@ const adminSideBarFormat = [
     url : "/admin/view/events",
     icon : "CreateEvent",
   },
+  {
+    name : "Contact",
+    url : "/admin/view/msg",
+    icon : "Msgs",
+  },
 ]
 
 const Sidebar = () => {
@@ -41,32 +67,33 @@ const Sidebar = () => {
   return (
     <div className='flex flex-col sm:border-r-[2px] px-[10%] py-3 w-full ' >
         {
-          userSideBarFormat.map((obj,index) => {
-            return (
-              <a href={obj.url} key={index} className="">
-                <div className="flex items-center gap-5 py-2 ">
-                    <IconSelector type={obj.icon} />
-                    <div className="">{obj.name}</div>
-                </div>
-              </a>
 
-            )
-          })
         }
         {
           cookies.adminUid ?
-          adminSideBarFormat.map((obj,index) => {
-            return (
-              <a href={obj.url} key={index} className="">
-                <div className="flex items-center gap-5 py-2 ">
-                    <IconSelector type={obj.icon} />
-                    <div className="">{obj.name}</div>
-                </div>
-              </a>
+            adminSideBarFormat.map((obj,index) => {
+              return (
+                <a href={obj.url} key={index} className="">
+                  <div className="flex items-center gap-5 py-2 ">
+                      <IconSelector type={obj.icon} />
+                      <div className="">{obj.name}</div>
+                  </div>
+                </a>
 
-            )
-          })
-          : <></>
+              )
+            })
+          : 
+            userSideBarFormat.map((obj,index) => {
+              return (
+                <a href={obj.url} key={index} className="">
+                  <div className="flex items-center gap-5 py-2 ">
+                      <IconSelector type={obj.icon} />
+                      <div className="">{obj.name}</div>
+                  </div>
+                </a>
+
+              )
+            })
         }
         
     </div>

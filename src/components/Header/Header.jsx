@@ -23,20 +23,7 @@ const Header = ({displaySideBar}) => {
           }
           <div className="p-2 border-b-[2px]  border-[#ecf0f1] flex items-center justify-between ">
               {
-                cookies.log && cookies.uid ?
-                <>
-                    <MobileSidebar display={displaySideBar} />
-
-                    <a href='/' className="h-[50px] flex">
-                      <Logo />
-                    </a>
-
-                    <div className="flex gap-1">
-                      <ProfilePicture />
-                      <Notifications />
-                    </div>
-                </> 
-                :  cookies.log && cookies.adminUid ?
+                (cookies.log && cookies.uid) || (cookies.log && cookies.adminUid) ?
                 <>
                     <MobileSidebar display={displaySideBar} />
 
@@ -56,9 +43,9 @@ const Header = ({displaySideBar}) => {
                       <Logo />
                     </a>
                   
-                  <div className="">
-                    <ProfilePicture link="/login" />
-                  </div>
+                  <a href='/login' className="text-white primary px-3 py-2 rounded ">
+                    Login
+                  </a>
 
                 </>
               }

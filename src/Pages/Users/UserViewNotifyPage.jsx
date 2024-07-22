@@ -1,7 +1,7 @@
 import React from 'react'
-import Header from '../components/Header/Header'
-import Sidebar from '../components/Sidebar/Sidebar'
-import UserViewNotify from '../components/UserViewNotify/UserViewNotify'
+import Header from '../../components/Header/Header'
+import Sidebar from '../../components/Sidebar/Sidebar'
+import UserViewNotify from '../../components/UserViewNotify/UserViewNotify'
 
 const UserViewNotifyPage = () => {
   return (

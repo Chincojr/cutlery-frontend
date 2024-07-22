@@ -12,7 +12,8 @@
     @apply
     bg-[#4CAF50]
   }
-  
+
+
   .accent{
     @apply
     bg-[#e74c3c]
@@ -73,7 +74,6 @@ input[type="number"] {
 
 .eventsGrid {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-
 }
 
 .PhoneInputInput {
@@ -93,4 +93,9 @@ input[type="number"] {
 
 .grid100 {
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+}
+
+.userChatMsg {
+  @apply
+  bg-[#3498db80]
 }

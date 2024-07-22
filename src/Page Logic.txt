@@ -1,0 +1,15 @@
+Flow user 
+
+	Authenticate the user
+        IF User as an account
+            IF user is already logged In 
+                auth the log and key id's
+            Else 
+                User should login 
+        ELSE
+            Create An Account
+
+    Create A Web socket
+        Retrieve all the information associated to the user
+        Store the information in the indexedDB
+        

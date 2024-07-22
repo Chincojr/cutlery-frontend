@@ -1,8 +1,8 @@
 import React from 'react'
-import Header from '../components/Header/Header'
-import Sidebar from '../components/Sidebar/Sidebar'
-import IconSelector from '../components/IconSelector/IconSelector'
-import AdminCreateEvent from '../components/AdminCreateEvent/AdminCreateEvent'
+import Header from '../../components/Header/Header'
+import Sidebar from '../../components/Sidebar/Sidebar'
+import IconSelector from '../../components/IconSelector/IconSelector'
+import AdminCreateEvent from '../../components/AdminCreateEvent/AdminCreateEvent'
 import { useParams } from 'react-router-dom'
 
 const AdminCreateEventsPage = () => {

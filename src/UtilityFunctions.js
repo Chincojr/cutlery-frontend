@@ -371,62 +371,62 @@ export function SortPastTodayFuture (reminder){
 export const CheckUserSeen = async () => {
   try {
 
-    const DBs = ["Event", "Notify", "Seen"]
-    var DBData = {
-      Event: [],
-      Notify: [],
-      Seen: [],
-    }
+    // const DBs = ["Event", "Notify", "Seen"]
+    // var DBData = {
+    //   Event: [],
+    //   Notify: [],
+    //   Seen: [],
+    // }
 
-    const retrieveUserData = DBs.map(async (dbName) => {
-      try {
-        let dbInfo = await DexieGet(dbName)
-        DBData[dbName] = dbInfo;
-      } catch (error) {
-        console.log("Error retriving data from indexedDB");
-      }
-    })
+    // const retrieveUserData = DBs.map(async (dbName) => {
+    //   try {
+    //     let dbInfo = await DexieGet(dbName)
+    //     DBData[dbName] = dbInfo;
+    //   } catch (error) {
+    //     console.log("Error retriving data from indexedDB");
+    //   }
+    // })
 
-    await Promise.all(retrieveUserData);
+    // await Promise.all(retrieveUserData);
 
-    let Event = [];
-    let Notify = [];
+    // let Event = [];
+    // let Notify = [];
 
-    if ( DBData.Seen.length > 0 ) {
+    // if ( DBData.Seen.length > 0 ) {
 
-      let seenList = [];
+    //   let seenList = [];
 
-      DBData.Seen.forEach(seenObj => {
-        seenList.push(seenObj.systemID)
-      });
+    //   DBData.Seen.forEach(seenObj => {
+    //     seenList.push(seenObj.systemID)
+    //   });
 
-      DBData.Event.forEach(eventsObj => {
-        if (!seenList.includes(eventsObj.systemID)) {
-          Event.push({...eventsObj, type: "Event"})
-        }
-      })
+    //   DBData.Event.forEach(eventsObj => {
+    //     if (!seenList.includes(eventsObj.systemID)) {
+    //       Event.push({...eventsObj, type: "Event"})
+    //     }
+    //   })
 
-      DBData.Notify.forEach(notifyObj => {
-        if (!seenList.includes(notifyObj.systemID)) {
-          Notify.push({...notifyObj, type: "Notify"})
-        }
-      })      
-    } else {
+    //   DBData.Notify.forEach(notifyObj => {
+    //     if (!seenList.includes(notifyObj.systemID)) {
+    //       Notify.push({...notifyObj, type: "Notify"})
+    //     }
+    //   })      
+    // } else {
 
-      DBData.Event.forEach(eventsObj => {
-          Event.push({...eventsObj, type: "Event"})
-      })
+    //   DBData.Event.forEach(eventsObj => {
+    //       Event.push({...eventsObj, type: "Event"})
+    //   })
 
-      DBData.Notify.forEach(notifyObj => {
-        Notify.push({...notifyObj, type: "Notify"})
-      })      
-    }
+    //   DBData.Notify.forEach(notifyObj => {
+    //     Notify.push({...notifyObj, type: "Notify"})
+    //   })      
+    // }
 
-    if (Event.length === 0 && Notify.length === 0) {
-      return false;
-    } else {
-      return [...Event,...Notify ]
-    }
+    // if (Event.length === 0 && Notify.length === 0) {
+    //   return false;
+    // } else {
+    //   return [...Event,...Notify ]
+    // }
 
     
 
@@ -435,4 +435,50 @@ export const CheckUserSeen = async () => {
   } catch (error) {
     console.log(error);
   }
+}
+
+export const DeleteMessageFromLocalStorage = (type, messageID) => {
+  // Retrieve all Pending Messages
+  var localStoragePendingMessages = JSON.parse(localStorage.getItem('pendingMsg')) || {};
+
+  // Check if there are no pending messages
+  if (!localStoragePendingMessages[type]) {
+    return;
+  }
+
+  const currentTypeMessages = localStoragePendingMessages[type];
+
+  // Check if the specific message exists
+  if (currentTypeMessages[messageID]) {
+    delete currentTypeMessages[messageID];
+  } else {
+    return;
+  }
+
+  // If there are no more messages of the current type, remove the type key
+  if (Object.keys(currentTypeMessages).length === 0) {
+    delete localStoragePendingMessages[type];
+  } else {
+    // Otherwise, update the type messages
+    localStoragePendingMessages[type] = currentTypeMessages;
+  }
+
+  // Update the Pending Messages in local storage
+  localStorage.setItem('pendingMsg', JSON.stringify(localStoragePendingMessages));
+  console.log("Deleted pending message", localStoragePendingMessages);
+}
+
+
+export function getBase64Size(base64) {
+  base64 = base64.split(',')[1];
+  let padding, inBytes, base64StringLength;
+  
+  if (base64.endsWith('==')) padding = 2;
+  else if (base64.endsWith('=')) padding = 1;
+  else padding = 0;
+
+  base64StringLength = base64.length;
+  inBytes = (base64StringLength / 4) * 3 - padding;
+
+  return inBytes;
 }

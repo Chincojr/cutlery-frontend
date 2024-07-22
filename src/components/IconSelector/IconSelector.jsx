@@ -17,6 +17,12 @@ import { CiLogin } from "react-icons/ci";
 import { LuAlarmClockOff } from "react-icons/lu";
 import { MdEventNote } from "react-icons/md";
 import { IoNotificationsOffOutline } from "react-icons/io5";
+import { TbMessages } from "react-icons/tb";
+import { TbMessagesOff } from "react-icons/tb";
+import { MdSubdirectoryArrowLeft } from "react-icons/md";
+import { RiSendPlane2Fill } from "react-icons/ri";
+import { PiArrowClockwiseFill } from "react-icons/pi";
+import { MdOutlineContentCopy } from "react-icons/md";
 
 
 
@@ -98,6 +104,30 @@ const IconSelector = ({type,size,className,color}) => {
     case "NoNotify":
       return (
         <IoNotificationsOffOutline  size={size} color={color} className={className} />
+      )
+    case "Msgs":
+      return (
+        <TbMessages   size={size} color={color} className={className} />
+      )
+    case "NoMsg":
+      return (
+        <TbMessagesOff   size={size} color={color} className={className} />
+      )
+    case "Reply":
+      return (
+        <MdSubdirectoryArrowLeft  size={size} color={color} className={className} />
+      )
+    case "Send":
+      return (
+        <RiSendPlane2Fill  size={size} color={color} className={className} />
+      )
+    case "Pending":
+      return (
+        <PiArrowClockwiseFill  size={size} color={color} className={className} />
+      )
+    case "Copy":
+      return (
+        <MdOutlineContentCopy  size={size} color={color} className={className} />
       )
     default:
       return (

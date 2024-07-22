@@ -145,9 +145,12 @@ const HandleLogin = async () => {
                     )
                   })
                 }
-                <a href={`${type ? "/admin/forget-password" : "/forget-password"}`} className="underline lowercase text-[12px] px-2 text-end">
-                    Forget Password
-                </a>                
+                <div className="flex justify-end">
+                  <a href={`${type ? "/admin/forget-password" : "/forget-password"}`} className="underline lowercase text-[12px] px-2 text-end w-fit">
+                      Forget Password
+                  </a>  
+                </div>
+              
                 <div className="text-white w-full text-center">
                     <button onClick={HandleLogin} className="rounded-[20px] outline-none uppercase primary p-2 px-4 text-[14px]">Sign in</button>
                 </div>

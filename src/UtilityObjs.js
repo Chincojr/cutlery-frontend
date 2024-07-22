@@ -209,6 +209,14 @@ export const UnavailableMessage = {
   Notify: {
     iconType: "NoNotify",
     text: "No Notification"
+  },
+  Msg: {
+    iconType: "NoMsg",
+    text: "No message"
+  },
+  SelectMsg: {
+    iconType: "Msgs",
+    text: "Select Chat"
   }
 }
 

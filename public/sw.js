@@ -1,4 +1,4 @@
-var webOrigin 
+var webOrigin = "http://localhost:3000"
 const indexedDBName = "UserInfo";
 importScripts('https://cdn.jsdelivr.net/npm/dexie@3.2.2/dist/dexie.min.js');
 
@@ -20,7 +20,10 @@ self.addEventListener('push', event => {
       body: notificationData.body || 'Default body',
       icon: notificationData.icon || webOrigin + '/icon.ico',
       badge: notificationData.badge || webOrigin +'/icon.jpg',
-      data: notificationData.data || { url: notificationData.link ? webOrigin + notificationData.link : webOrigin+'/' },
+      data: notificationData.data || 
+            { 
+              url: notificationData.link ? webOrigin + notificationData.link : webOrigin+'/' 
+            },
     };
   
     event.waitUntil(

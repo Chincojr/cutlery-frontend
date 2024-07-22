@@ -1,7 +1,7 @@
 import React from 'react'
-import ChatList from '../components/ChatsList/ChatList'
-import Header from '../components/Header/Header'
-import Sidebar from '../components/Sidebar/Sidebar'
+import ChatList from '../../components/ChatsList/ChatList'
+import Header from '../../components/Header/Header'
+import Sidebar from '../../components/Sidebar/Sidebar'
 
 const AdminPage = () => {
   return (

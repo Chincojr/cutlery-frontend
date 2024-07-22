@@ -1,8 +1,8 @@
 import React from 'react'
-import Header from '../components/Header/Header'
-import Sidebar from '../components/Sidebar/Sidebar'
-import IconSelector from '../components/IconSelector/IconSelector'
-import AdminViewEvents from '../components/AdminViewEvents/AdminViewEvents'
+import Header from '../../components/Header/Header'
+import Sidebar from '../../components/Sidebar/Sidebar'
+import IconSelector from '../../components/IconSelector/IconSelector'
+import AdminViewEvents from '../../components/AdminViewEvents/AdminViewEvents'
 
 const AdminViewEventsPage = () => {
   return (

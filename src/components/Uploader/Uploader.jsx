@@ -7,6 +7,7 @@ function Uploader({size,color,setSelectedFile,uploadType,multiple}) {
     const fileInputRef = useRef(null);
 
     const handleFileChange = async(event) => {
+        
         if (multiple) {
             setSelectedFile(event.target.files)
             return

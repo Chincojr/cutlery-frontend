@@ -1,7 +1,7 @@
 import React from 'react'
-import Header from '../components/Header/Header'
-import Sidebar from '../components/Sidebar/Sidebar'
-import UserViewSpecificEvent from '../components/UserViewSpecificEvent/UserViewSpecificEvent'
+import Header from '../../components/Header/Header'
+import Sidebar from '../../components/Sidebar/Sidebar'
+import UserViewSpecificEvent from '../../components/UserViewSpecificEvent/UserViewSpecificEvent'
 
 
 const UserViewSpecificEventPage = () => {

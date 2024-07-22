@@ -1,32 +1,12 @@
 import React from 'react'
 import Header from '../components/Header/Header'
 import visitStore from '../assets/visit-store.webp'
-import gallery1 from '../assets/gallery1.webp'
-import gallery2 from '../assets/gallery2.webp'
-import gallery3 from '../assets/gallery3.webp'
-import gallery4 from '../assets/gallery4.webp'
-import gallery5 from '../assets/gallery5.webp'
-import gallery6 from '../assets/gallery6.webp'
-import gallery7 from '../assets/gallery7.webp'
-import gallery8 from '../assets/gallery8.webp'
-
-
-const GalleryImages = [
-  gallery1,
-  gallery2,
-  gallery3,
-  gallery4,
-  gallery5,
-  gallery6,
-  gallery7,
-  gallery8
-]
 
 const HomePage = () => {
   return (
     <div className='h-screen overflow-hidden flex flex-col '>
         <Header displaySideBar={true} />
-        <div className="grid h-full overflow-auto gap-7 ">
+        <div className="grid h-full overflow-auto gap-7 pb-5 ">
 
           {/* Hero */}
           <div className="bg-hero bg-cover h-full relative ">
@@ -98,31 +78,6 @@ const HomePage = () => {
             </div>
 
           </div>
-
-
-
-          {/* Gallery */}
-          <div className="px-[10%] pb-5 ">
-
-            <div className=" flex flex-col sm:flex-row justify-center items-center gap-2">
-              <div className=" border-[1px] grow border-black w-full "> </div>
-              <div className="text-[36px] flex-none font-bold text-center w-fit">OUR GALLERY</div>
-              <div className=" border-[1px] grow border-black w-full "> </div>
-              <hr />
-            </div>
-
-            <div className="grid grid-cols-3 sm:grid-cols-4 text-white gap-2 ">
-                {
-                  GalleryImages.map((img,index) => {
-                    return (
-                      <img key={index} src={img} alt="" className="" />
-                    )
-                  })
-                }
-            </div>
-
-          </div>
-
 
         </div>
     </div>

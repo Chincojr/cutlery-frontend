@@ -1,8 +1,8 @@
 import React from 'react'
-import Header from '../components/Header/Header'
-import Sidebar from '../components/Sidebar/Sidebar'
-import AdminViewNotifs from '../components/AdminViewNotifs/AdminViewNotifs'
-import IconSelector from '../components/IconSelector/IconSelector'
+import Header from '../../components/Header/Header'
+import Sidebar from '../../components/Sidebar/Sidebar'
+import AdminViewNotifs from '../../components/AdminViewNotifs/AdminViewNotifs'
+import IconSelector from '../../components/IconSelector/IconSelector'
 
 
 
