@@ -1,4 +1,4 @@
-var webOrigin = "http://localhost:3000"
+var webOrigin 
 const indexedDBName = "UserInfo";
 importScripts('https://cdn.jsdelivr.net/npm/dexie@3.2.2/dist/dexie.min.js');
 
