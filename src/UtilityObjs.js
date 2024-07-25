@@ -162,7 +162,7 @@ export const adminEventErrMessage = {
 
 export const adminNotifyErrMessage = {
   title : "Title is required",
-  selectDay: "Select date",
+  selectDay: "Invalid day",
   selectTime: "Invalid time ",
   link : "This url is invalid"
 }

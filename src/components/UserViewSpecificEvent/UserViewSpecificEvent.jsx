@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { DexieSpecificGet } from '../../DexieDb'
 import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import uploadImage from '../../assets/uploadImage.png'
@@ -9,7 +8,7 @@ import { useCookies } from 'react-cookie'
 import { allCookies } from '../../UtilityObjs'
 import { RequestUserSeen } from '../../RequestFunction'
 
-const UserViewSpecificEvent = () => {
+const UserViewSpecificEvent = ({userID, userObject}) => {
 
   const [cookies, setCookie, removeCookie] = useCookies(allCookies);
   const [event, setEvent] = useState()
@@ -22,18 +21,42 @@ const UserViewSpecificEvent = () => {
   }
 
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    const GetSpecificEvent = async() => {
-      let specificEvent = await DexieSpecificGet("Event",eventID)
-      setEvent(specificEvent[0]);
+  //   const GetSpecificEvent = async() => {
+  //     let specificEvent = await DexieSpecificGet("Event",eventID)
+  //     setEvent(specificEvent[0]);
 
-      let admin = cookies.uid ? cookies.uid : cookies.adminUid
-      await RequestUserSeen(admin,eventID)
+  //     let admin = cookies.uid ? cookies.uid : cookies.adminUid
+  //     await RequestUserSeen(admin,eventID)
 
-    }
-    GetSpecificEvent();
-  }, [])
+  //   }
+  //   GetSpecificEvent();
+  // }, [])
+
+  useEffect(() => {
+      
+      const GetSpecificReminder = async() => {
+          if (
+              userObject && 
+              userObject.Event && 
+              userObject.Event.length > 0                
+          ) {
+              let specificEvent = userObject.Event.filter(event => event.systemID === eventID )
+              if (specificEvent.length === 1) {
+                  setEvent(specificEvent[0])
+              } else {
+                  window.location.href = "/"
+
+              }
+          }
+
+      }
+      if (eventID) {
+          GetSpecificReminder();
+      }
+
+  }, [userObject])
 
   console.log(monthName,dayWithSuffix);
   

@@ -4,7 +4,7 @@ import Sidebar from '../../components/Sidebar/Sidebar'
 import UserViewSpecificEvent from '../../components/UserViewSpecificEvent/UserViewSpecificEvent'
 
 
-const UserViewSpecificEventPage = () => {
+const UserViewSpecificEventPage = ({userObject, userID}) => {
   return (
     <div className='h-screen overflow-hidden flex flex-col '>
         <Header />
@@ -12,7 +12,7 @@ const UserViewSpecificEventPage = () => {
             <div className=" hidden lg:flex ">
                 <Sidebar />
             </div>
-            <UserViewSpecificEvent />
+            <UserViewSpecificEvent userID={userID} userObject={userObject} />
         </div>
     </div>
   )

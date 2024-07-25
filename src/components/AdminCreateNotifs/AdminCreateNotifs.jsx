@@ -42,7 +42,7 @@ const AdminCreateNotifs = () => {
   })
 
   const HandleInvalid = (name,value) => {
-
+    let otherErr = {}
     switch (name) {
         case "title":
             if ( !value ) {
@@ -52,25 +52,64 @@ const AdminCreateNotifs = () => {
             break;    
         case "selectDay":
             if (notifInfo.automate) {
+
+                // if selectday input does not have a value flag it
                 if ( !value ) {
                     setErr({...err, [name] : adminNotifyErrMessage[name]})
                     return true
                 }
-                if (value !== presentDay ) {
-                    setErr({...err, ["selectTime"] : ""})
+
+
+                // if selectTime input does not have a value flag it
+                if ( !notifInfo.selectTime ) {
+                    setErr({...err, ["selectTime"] : adminNotifyErrMessage["selectTime"]})
                     return true
                 }
+
+                // if both selectDay and selectTime are true but the the date is less that the pressent date flag this input(selectDay)
+                let presentDate = `${presentDay}T${presentTime}`
+                let selectedDate = `${value}T${notifInfo.selectTime}`
+                let compareTime = timeCompare(selectedDate,presentDate)
+                console.log(compareTime,"This is compare time");
+                if ( !compareTime  ) {
+                    setErr({...err, [name] : adminNotifyErrMessage[name]})
+                    return true
+                } else {
+                    otherErr = {...otherErr,["selectTime"] : ""}
+                }
+
+
+
             }
             break;   
         case "selectTime":
             if (notifInfo.automate) {
-                if (notifInfo.selectDay === presentDay) {
-                    let checkTime = timeCompare(value,presentTime)
-                    if ( !checkTime  ) {
-                        setErr({...err, [name] : adminNotifyErrMessage[name]})
-                        return true
-                    }
+
+                // if selectTime input does not have a value flag it
+                if ( !value ) {
+                    setErr({...err, [name] : adminNotifyErrMessage[name]})
+                    return true
                 }
+
+                // if selectday input does not have a value flag it
+                if ( !notifInfo.selectDay ) {
+                    setErr({...err, ["selectDay"] : adminNotifyErrMessage["selectDay"]})
+                    return true
+                }
+
+                // if both selectDay and selectTime are true but the the date is less that the pressent date flag this input(selectTime)
+                let presentDate = `${presentDay}T${presentTime}`
+                let selectedDate = `${notifInfo.selectDay}T${value}`
+                let compareTime = timeCompare(selectedDate,presentDate)
+                console.log(compareTime,"This is compare time");
+                if ( !compareTime  ) {
+                    setErr({...err, [name] : adminNotifyErrMessage[name]})
+                    return true
+                } else {
+                    otherErr = {...otherErr,["selectDay"] : ""}
+                }
+
+
             }
 
             break
@@ -84,7 +123,7 @@ const AdminCreateNotifs = () => {
             return false
             break;
     }
-    setErr({...err, [name] : ""})
+    setErr({...err, [name] : "", ...otherErr})
     return false
 }
 
@@ -116,6 +155,7 @@ const AdminCreateNotifs = () => {
     }
 
     console.log(JSON.stringify({obj:notifInfo,admin:cookies.adminUid}));
+    // return;
     setLoading(true)
     if (notifyID) {
         var NotifRequest = await RequestEditNotification(modifiedNotifInfo,cookies.adminUid)
@@ -127,6 +167,7 @@ const AdminCreateNotifs = () => {
     setLoading(false)
 
 
+    
     if (NotifRequest) {
         setNotify({
             outcome: true,

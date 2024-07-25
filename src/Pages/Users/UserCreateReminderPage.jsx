@@ -5,7 +5,7 @@ import IconSelector from '../../components/IconSelector/IconSelector'
 import UserCreateReminder from '../../components/UserCreateReminder/UserCreateReminder'
 import { useParams } from 'react-router-dom'
 
-const CreateReminderPage = () => {
+const UserCreateReminderPage = ({userObject, userID}) => {
 
   let {reminderID} = useParams() 
 
@@ -23,11 +23,11 @@ const CreateReminderPage = () => {
               <div className="font-bold text-2xl py-4 w-full text-center">
               {reminderID ? "Edit" : "Create New"} Reminder
               </div>
-              <UserCreateReminder />
+              <UserCreateReminder userID={userID} userObject={userObject}  />
           </div>
         </div>
     </div>
   )
 }
 
-export default CreateReminderPage
+export default UserCreateReminderPage

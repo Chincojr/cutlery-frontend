@@ -8,8 +8,8 @@ const SearchBar = ({searchInfo, setSearchInfo , type, noBorder,otherFunctions}) 
   const [searchText, setSearchText] = useState("")
 
   const HandleBack = () => {
-    // setSearchInfo(unFilteredSearchInfo)
-    // setSearchText("")
+    setSearchInfo(unFilteredSearchInfo)
+    setSearchText("")
     if (otherFunctions) {
       otherFunctions()
     }

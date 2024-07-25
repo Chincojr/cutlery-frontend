@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import AdminViewNotifsPage from './Pages/Admin/AdminViewNotifsPage'
 import UserAccount from './Pages/Users/UserAccount'
 import HomePage from './Pages/HomePage'
-import CreateReminderPage from './Pages/Users/UserCreateReminderPage'
+import UserCreateReminderPage from './Pages/Users/UserCreateReminderPage'
 import AdminCreateEventsPage from './Pages/Admin/AdminCreateEventsPage'
 import AdminViewEventsPage from './Pages/Admin/AdminViewEventsPage'
 import ViewReminderPage from './Pages/Users/UserViewReminderPage'
@@ -134,8 +134,8 @@ const RouteFile = () => {
                         <Route path="/contact" element={<UserContactPage userObject={ userObject }  userID={ userID } onlineUsers={onlineUsers} />} />
 
                         {/* User reminder Urls */}
-                        <Route path="/new/reminder" element={<CreateReminderPage userObject={ userObject }  userID={ userID }/>} />
-                        <Route path="/edit/reminder/:reminderID" element={<CreateReminderPage userObject={ userObject }  userID={ userID }/>} />
+                        <Route path="/new/reminder" element={<UserCreateReminderPage userObject={ userObject }  userID={ userID }/>} />
+                        <Route path="/edit/reminder/:reminderID" element={<UserCreateReminderPage userObject={ userObject }  userID={ userID }/>} />
                         <Route path="/view/reminders" element={<ViewReminderPage userObject={ userObject }  userID={ userID }/>} />
 
                         {/* User profile settings */}

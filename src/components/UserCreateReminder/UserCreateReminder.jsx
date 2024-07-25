@@ -10,7 +10,6 @@ import Loading from '../Loading/Loading'
 import { useCookies } from 'react-cookie'
 import { RequestCreateReminder, RequestEditReminder } from '../../RequestFunction'
 import { useParams } from 'react-router-dom'
-import { DexieSpecificGet } from '../../DexieDb'
 
 const RepeatFunctions = {
     day:{
@@ -31,7 +30,7 @@ const RepeatFunctions = {
     }
 }
 
-const UserCreateReminder = () => {
+const UserCreateReminder = ({userObject, userID}) => {
 
     let {reminderID} = useParams() 
     const [loading, setLoading] = useState()
@@ -151,17 +150,19 @@ const UserCreateReminder = () => {
                 title :reminderInfo.title,
                 caption: reminderInfo.caption,
                 selectDay: reminderInfo.selectDay,
-                admin: cookies.uid,
-                repeatState:false
+                admin: userID,
+                repeatState:false,
+                isAdmin: cookies.uid ? false : true 
             }
         } else {
             modifiedReminderInfo = {
                 title :reminderInfo.title,
                 caption: reminderInfo.caption,
                 selectDay: reminderInfo.selectDay,
-                admin: cookies.uid,
+                admin: userID,
                 repeatState:reminderInfo.repeatState,
-                [reminderInfo.repeatState]:reminderInfo[reminderInfo.repeatState]
+                [reminderInfo.repeatState]:reminderInfo[reminderInfo.repeatState],
+                isAdmin: cookies.uid ? false : true 
             }
         }
 
@@ -172,9 +173,11 @@ const UserCreateReminder = () => {
         console.log(JSON.stringify({obj:modifiedReminderInfo,admin:cookies.uid}));
         setLoading(true)
         if (reminderID) {
-            modifiedReminderInfo = {...modifiedReminderInfo,systemID :reminderInfo.systemID}
-            let admin = cookies.uid ? cookies.uid : cookies.adminUid;
-            var ReminderRequest = await RequestEditReminder(modifiedReminderInfo,admin)
+            modifiedReminderInfo = {
+                ...modifiedReminderInfo,
+                systemID :reminderInfo.systemID
+            }
+            var ReminderRequest = await RequestEditReminder(modifiedReminderInfo,userID)
             var message = EditRemindersMessage
         } else {
             var ReminderRequest = await RequestCreateReminder(modifiedReminderInfo)
@@ -241,11 +244,19 @@ const UserCreateReminder = () => {
     useEffect(() => {
     
         const GetSpecificReminder = async() => {
-            let specificReminder = await DexieSpecificGet("Reminders",reminderID)
-            if (specificReminder && specificReminder.length === 1) {
-                setReminderInfo(specificReminder[0])
-            } else {
-                window.location.href = "/"
+            
+            if (
+                userObject && 
+                userObject.Reminders && 
+                userObject.Reminders.length > 0                
+            ) {
+                let specificReminder = userObject.Reminders.filter(reminder => reminder.systemID === reminderID )
+                if (specificReminder.length === 1) {
+                    setReminderInfo(specificReminder[0])
+                } else {
+                    window.location.href = "/"
+
+                }
             }
     
         }
@@ -253,7 +264,7 @@ const UserCreateReminder = () => {
             GetSpecificReminder();
         }
     
-    }, [])
+    }, [userObject])
 
     
   return (

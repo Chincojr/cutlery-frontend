@@ -99,21 +99,15 @@ export function geetInputDate(date){
 
 }
 
-export function timeCompare(time1, time2) {
-  // Split the time strings into hours and minutes
-  const [hours1, minutes1] = time1.split(':').map(Number);
-  const [hours2, minutes2] = time2.split(':').map(Number);
+export function timeCompare(dateString1, dateString2) {
+  // Create Date objects for both times, using a fixed date
+  const date1 = new Date(dateString1);
+  const date2 = new Date(dateString2);
 
+  console.log(date1,"/n", date2,"/n", "Date values");
 
-  // Compare the hours
-  if (hours1 > hours2) {
-      return true;
-  } else if (hours1 < hours2) {
-      return false;
-  }
-
-  // If hours are equal, compare the minutes
-  return minutes1 > minutes2;
+  // Compare the Date objects directly
+  return date1 > date2;
 }
 
 export function checkPasswordStrength(input) {
