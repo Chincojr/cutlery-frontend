@@ -8,17 +8,17 @@ import { allCookies } from '../../UtilityObjs'
 import AllowNotification from '../AllowNotification/AllowNotification'
 
 
-const Header = ({displaySideBar}) => {
+const Header = ({displaySideBar, userObject}) => {
   const [cookies, setCookie, removeCookie] = useCookies(allCookies);
 
   return (
     <div className='flex flex-col   '>
           {
             cookies.log && cookies.uid ?
-            <AllowNotification />
+            <AllowNotification userObject={userObject} />
             :
             cookies.log && cookies.adminUid ?
-            <AllowNotification />
+            <AllowNotification userObject={userObject} />
             : <></>
           }
           <div className="p-2 border-b-[2px]  border-[#ecf0f1] flex items-center justify-between ">

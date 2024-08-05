@@ -23,7 +23,7 @@ const UserContactPage = ({userObject, userID, onlineUsers}) => {
 
   return (
     <div className='h-screen overflow-hidden flex flex-col relative'>
-        <Header />
+        <Header userObject={userObject} />
         <div className="grid lg:grid-cols-[20%_80%] h-full overflow-hidden ">
           <div className=" hidden lg:flex ">
             <Sidebar />

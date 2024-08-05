@@ -12,6 +12,7 @@ export const allCookies = [
   'log',
   "uid",
   "adminUid",
+  "reminder",
 ]
 
 export const VerifyCodeMessage = {

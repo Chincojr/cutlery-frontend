@@ -320,8 +320,6 @@ const UserCreateReminder = ({userObject, userID}) => {
                         }
                     </div>
 
-
-
                 </div>
 
                 <div className="text-white w-full py-2 flex items-center justify-center gap-10">

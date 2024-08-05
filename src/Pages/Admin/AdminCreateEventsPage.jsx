@@ -5,13 +5,13 @@ import IconSelector from '../../components/IconSelector/IconSelector'
 import AdminCreateEvent from '../../components/AdminCreateEvent/AdminCreateEvent'
 import { useParams } from 'react-router-dom'
 
-const AdminCreateEventsPage = () => {
+const AdminCreateEventsPage = ({userObject}) => {
 
   let {eventID} = useParams() 
 
   return (
     <div className='h-screen overflow-hidden flex flex-col '>
-        <Header />
+        <Header userObject={userObject} />
         <div className="grid lg:grid-cols-[20%_80%] h-full ">
           <div className=" hidden lg:flex ">
             <Sidebar />

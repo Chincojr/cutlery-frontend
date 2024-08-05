@@ -38,7 +38,7 @@ export const subscribeUser = async () => {
       userVisibleOnly: true,
       applicationServerKey
     });
-    console.log('User is subscribed:' , subscription);
+    // console.log('User is subscribed:' , subscription);
     sendSubscriptionToServer(subscription);
   } catch (error) {
     console.error('Failed to subscribe the user: ', error);

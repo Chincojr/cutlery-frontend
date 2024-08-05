@@ -8,7 +8,7 @@ import { HandleLogOut } from '../../UtilityFunctions'
 
 
 
-const UserAccount = () => {
+const UserAccount = ({userObject}) => {
 
   const [userImage, setUserImage] = useState(false)
   const [userName, setUserName] = useState("")
@@ -21,7 +21,7 @@ const UserAccount = () => {
 
   return (
     <div className='h-screen overflow-hidden'>
-        <Header />
+        <Header userObject={userObject} />
         <div className="grid lg:grid-cols-[20%_80%] h-full ">
           <div className=" hidden lg:flex ">
             <Sidebar />

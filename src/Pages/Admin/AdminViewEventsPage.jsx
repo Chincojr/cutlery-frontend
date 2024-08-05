@@ -4,10 +4,10 @@ import Sidebar from '../../components/Sidebar/Sidebar'
 import IconSelector from '../../components/IconSelector/IconSelector'
 import AdminViewEvents from '../../components/AdminViewEvents/AdminViewEvents'
 
-const AdminViewEventsPage = () => {
+const AdminViewEventsPage = ({userObject}) => {
   return (
     <div className='flex flex-col h-screen overflow-hidden'>
-        <Header />
+        <Header userObject={userObject} />
         <div className="grid lg:grid-cols-[20%_80%] h-full overflow-hidden ">
             <div className=" hidden lg:flex ">
                 <Sidebar />

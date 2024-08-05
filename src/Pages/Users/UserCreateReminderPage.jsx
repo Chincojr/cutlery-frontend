@@ -11,7 +11,7 @@ const UserCreateReminderPage = ({userObject, userID}) => {
 
   return (
     <div className='h-screen overflow-x-hidden'>
-        <Header />
+        <Header userObject={userObject} />
         <div className="grid lg:grid-cols-[20%_80%] h-full ">
             <div className=" hidden lg:flex ">
                 <Sidebar />

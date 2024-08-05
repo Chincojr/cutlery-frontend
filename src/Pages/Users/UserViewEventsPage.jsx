@@ -3,10 +3,10 @@ import Header from '../../components/Header/Header'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import UserViewEvents from '../../components/UserViewEvents/UserViewEvents'
 
-const UserViewEventsPage = () => {
+const UserViewEventsPage = ({userObject}) => {
   return (
     <div className='h-screen overflow-hidden flex flex-col '>
-        <Header />
+        <Header userObject={userObject} />
         <div className="grid lg:grid-cols-[20%_80%] h-full overflow-hidden ">
             <div className=" hidden lg:flex ">
                 <Sidebar />

@@ -4,10 +4,10 @@ import Sidebar from '../../components/Sidebar/Sidebar'
 import IconSelector from '../../components/IconSelector/IconSelector'
 import UserViewReminder from '../../components/UserViewReminder/UserViewReminder'
 
-const ViewReminderPage = () => {
+const ViewReminderPage = ({userObject}) => {
   return (
     <div className='h-screen overflow-hidden flex flex-col '>
-        <Header />
+        <Header userObject={userObject} />
         <div className="grid lg:grid-cols-[20%_80%] h-full  ">
             <div className=" hidden lg:flex ">
                 <Sidebar />

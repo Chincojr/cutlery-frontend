@@ -2,10 +2,10 @@ import React from 'react'
 import Header from '../components/Header/Header'
 import visitStore from '../assets/visit-store.webp'
 
-const HomePage = () => {
+const HomePage = ({userObject}) => {
   return (
     <div className='h-screen overflow-hidden flex flex-col '>
-        <Header displaySideBar={true} />
+        <Header userObject={userObject} displaySideBar={true} />
         <div className="grid h-full overflow-auto gap-7 pb-5 ">
 
           {/* Hero */}

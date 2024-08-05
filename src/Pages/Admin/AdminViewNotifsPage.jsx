@@ -6,10 +6,10 @@ import IconSelector from '../../components/IconSelector/IconSelector'
 
 
 
-const AdminViewNotifsPage = () => {
+const AdminViewNotifsPage = ({userObject}) => {
   return (
     <div className='flex flex-col h-screen overflow-hidden'>
-        <Header />
+        <Header userObject={userObject}/>
         <div className="grid lg:grid-cols-[20%_80%] h-full overflow-hidden ">
             <div className=" hidden lg:flex ">
                 <Sidebar />

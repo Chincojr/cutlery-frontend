@@ -142,11 +142,23 @@ export async function DexieUpdateAdmin(updateKey,updateValues) {
 
 
 
+export async function DexieUpdateAdminAndUserObject(updateObj) {
 
+    try {
+        const userObject = await db.User.get(1);
 
-
-
-
+        let newUserObject = {
+            ...userObject.data,
+            ...updateObj
+        }
+        await db.User.put({id: 1, data:newUserObject});
+        console.log(`User Object updated`, newUserObject );
+        return true;
+    } catch (error) {
+        console.error(`Error updating user object `, error);
+        return false;
+    }
+}
 
 
 

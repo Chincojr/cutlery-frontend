@@ -7,7 +7,7 @@ import UserViewSpecificEvent from '../../components/UserViewSpecificEvent/UserVi
 const UserViewSpecificEventPage = ({userObject, userID}) => {
   return (
     <div className='h-screen overflow-hidden flex flex-col '>
-        <Header />
+        <Header userObject={userObject} />
         <div className="grid lg:grid-cols-[20%_80%] h-full  ">
             <div className=" hidden lg:flex ">
                 <Sidebar />

@@ -1,4 +1,4 @@
-import { DexieUpdateAdmin, DexieUpdateUserInformation, DexieUpdateUserObject } from "./DexieDb";
+import { DexieUpdateAdmin, DexieUpdateAdminAndUserObject, DexieUpdateUserInformation, DexieUpdateUserObject } from "./DexieDb";
 import { DeleteMessageFromLocalStorage } from "./UtilityFunctions";
 
 var socket
@@ -51,7 +51,7 @@ export function WSClose () {
 
 export function WSMessage(HandleLogged,HandleAdmin,HandleLoading,isAdmin, setUpdateCount,setUserID,id,setOnlineUsers) {
     socket.onmessage = async function(event) {
-        console.log('Message received:', event.data, typeof event.data, JSON.parse(event.data));
+        // console.log('Message received:', event.data, typeof event.data, JSON.parse(event.data));
 
         let data = JSON.parse(event.data);
 
@@ -128,6 +128,9 @@ export function WSMessage(HandleLogged,HandleAdmin,HandleLoading,isAdmin, setUpd
             case "Ping":
                 // update online users
                 setOnlineUsers(data.message)
+                break;
+            case "Reminder":
+                DexieUpdateAdminAndUserObject(data.message)
                 break;
             default:
                 break;

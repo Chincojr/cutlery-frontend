@@ -60,20 +60,6 @@ export const RequestAdminUserLogin = async (email,password) => {
   }
 }
 
-
-export const RequestUserNotifySubscribeObject = async (uid, adminUid) => {
-  try {
-      let response = await axios.get(`${process.env.REACT_APP_API_URL}/subscribe-notify`, {
-        params : {uid,adminUid}
-      })
-      return response.status
-  } catch (error) {
-    console.error('There was an error making the request!', error);
-    return error.response ? error.response.status : 500;
-  }
-}
-
-
 export const RequestCreateNotification = async (obj) => {
   try {
       let response = await axios.post(`${process.env.REACT_APP_API_URL}/notify`, JSON.stringify(obj))
