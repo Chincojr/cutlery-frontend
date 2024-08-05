@@ -16,11 +16,6 @@ const userSideBarFormat = [
     icon : "Event",
   },
   {
-    name : "Reminders",
-    url : "/view/reminders",
-    icon : "Reminder",
-  },
-  {
     name : "Contact",
     url : "/contact",
     icon : "Msgs",
@@ -38,11 +33,6 @@ const adminSideBarFormat = [
     name : "Events",
     url : "/view/events",
     icon : "Event",
-  },
-  {
-    name : "Reminders",
-    url : "/view/reminders",
-    icon : "Reminder",
   },
   {
     name : "Admin Notification",
