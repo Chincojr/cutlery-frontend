@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import IconSelector from './IconSelector'
 import { useEffect } from 'react'
-import { CheckUserSeen } from '../UtilityFunctions'
+import { CheckEventAndNotifySeen } from '../UtilityFunctions'
 
 
 const Notifications = ({userObject}) => {
@@ -10,7 +10,9 @@ const Notifications = ({userObject}) => {
 
   useEffect(() => {
     async function checkForUnSeenNotifyOrEvent() {
-      let unSeenEventOrNotify = await CheckUserSeen(userObject);
+      let unSeenEventOrNotify = await CheckEventAndNotifySeen(userObject);
+      console.log("Unseen Notify: ".unSeenEventOrNotify);
+      
       if (unSeenEventOrNotify) {
         setUnSeen(true)
       } else {

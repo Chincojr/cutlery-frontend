@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import IconSelector from './IconSelector'
 import dayjs from 'dayjs'
-import { SortEventAndNotifyBasedOfDateCreated, getMonthNameWithSuffix } from '../UtilityFunctions'
+import { CheckUserSeen, SortEventAndNotifyBasedOfDateCreated, getMonthNameWithSuffix } from '../UtilityFunctions'
 import { useCookies } from 'react-cookie'
 import { allCookies } from '../UtilityObjs'
 import { RequestSeen } from '../RequestFunction'
@@ -95,19 +95,7 @@ const UserViewNotify = ({userID,userObject}) => {
 
                 let dateObj = dayjs(`${obj.created_at}`)
                 let { monthName,dayWithSuffix } = getMonthNameWithSuffix(dateObj.$M,dateObj.$D)
-                let hasUserSeenNotification = false
-                if (cookies.type === "Admin") {
-                    hasUserSeenNotification = obj.seen && JSON.parse(obj.seen) && JSON.parse(obj.seen)[userID] ? true : false
-                }
-
-                if (cookies.type === "Client") {
-                  hasUserSeenNotification = obj.seen ? true : false
-                }
-
-
-
-
-
+                let hasUserSeenNotification = CheckUserSeen(obj);
 
                 return (
                     <div key={index} className={` `}>

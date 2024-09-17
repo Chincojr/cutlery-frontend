@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import uploadImage from '../assets/uploadImage.png'
 import dayjs from 'dayjs'
-import { getMonthNameWithSuffix } from '../UtilityFunctions'
+import { CheckUserSeen, getMonthNameWithSuffix } from '../UtilityFunctions'
 import { useCookies } from 'react-cookie'
 import { allCookies } from '../UtilityObjs'
 import IconSelector from './IconSelector'
@@ -53,12 +53,15 @@ const UserViewSpecificEvent = ({userID, userObject}) => {
 
   useEffect(() => {   
 
-    const HandleUserSeen = async() => {
+    const HandleUserSeen = async() => {        
         if (
-            event &&
-            ( !event.seen || !JSON.parse(event.seen)[userID] )
-        ) {                    
-          await RequestSeen("Event", event.systemID)   
+            event 
+        ) {    
+          let seen = CheckUserSeen(event)             
+          if (!seen) {            
+            await RequestSeen("Event", event.systemID)
+          }  
+          
         } 
 
     }
@@ -66,10 +69,6 @@ const UserViewSpecificEvent = ({userID, userObject}) => {
 
   }, [event,userID])
 
-
-  
-
-  console.log(monthName,dayWithSuffix,userObject);
   
 
   return (

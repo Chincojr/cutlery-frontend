@@ -384,35 +384,42 @@ export function SortPastTodayFuture (reminder){
 
 }
 
-export const CheckUserSeen = async (userObject) => {
+export const CheckEventAndNotifySeen = async (userObject) => {
   let events = userObject && userObject.Event ? userObject.Event : [];
   let notify = userObject && userObject.Notify ? userObject.Notify : [];
-  let type = getCookie("type");
-  let uid = getCookie("uid");
   let eventsAndNotifyArr = [...events,...notify];
   let unSeen = false
   
-  eventsAndNotifyArr.forEach(obj => {
-    if (obj.seen) {
-      switch (type) {
-        case "Admin":
-          unSeen = obj.seen[uid] ? false : true
-          break;
-        case "Client":
-          unSeen = obj.seen ? true : false
-          break;                    
-        default:
-          break;
-      }
-    }
-
-    if (unSeen) {
-      return;
-    }
+  eventsAndNotifyArr.some(obj => {
+    let seen = CheckUserSeen(obj)
+    unSeen = !seen 
+    return unSeen
 
   });
-  return unSeen;
 
+  return unSeen;
+}
+
+
+export const CheckUserSeen = (obj) => {
+  let type = getCookie("type");
+  let uid = getCookie("uid");
+  
+  let seen = false;
+  if (obj.seen) {
+    switch (type) {
+      case "Admin":
+        seen = obj.seen && JSON.parse(obj.seen) && JSON.parse(obj.seen)[uid] ? true : false
+        break;
+      case "Client":
+        seen = obj.seen ? true : false
+        break;                    
+      default:
+        break;
+    }
+  }
+  console.log("Check User Seen",seen,obj.systemID)
+  return seen  
 }
 
 export const SortEventAndNotifyBasedOfDateCreated = async (userObject) => {
