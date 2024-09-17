@@ -11,8 +11,9 @@ export const allCookies = [
   'verify',
   'log',
   "uid",
-  "adminUid",
+  "type",
   "reminder",
+  "update"
 ]
 
 export const VerifyCodeMessage = {
@@ -26,6 +27,8 @@ export const RegisterSubmitMessage = {
   401 : "Invalid verification code",
   failure: "Error"
 }
+
+export const notificationTimeout = 5000
 
 export const RegisterFormFormat = [
   {
@@ -77,11 +80,6 @@ export const LoginFormErrMessage = {
   password: "Password Required",
 }
   
-export const LoginSubmitMessage = {
-  200 : "Login successful",
-  failure : "Server Error",
-  401 : "Invalid username or password"
-}
 
 export const notifsFormFormat = [
   {
@@ -102,30 +100,9 @@ export const notifsFormFormat = [
     label : "Link",
     type: "text",
     placeholder: "Enter link or url of choice"
-},
-
-]
-
-export const eventFormFomart = [
-  {
-      name : "image",
-      label : "Select Image",
-      type: "image",
-  },
-  {
-      name : "title",
-      label : "Title",
-      type: "text",
-      placeholder: "Enter Title..."
-  },
-  {
-      name : "content",
-      label : "Content",
-      type: "textarea",
-      placeholder: "Enter content...",
-      maxLength: 1500,
   }
 ]
+
 
 export const reminderFormFormat = [
   {

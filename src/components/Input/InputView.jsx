@@ -1,5 +1,5 @@
 import React from 'react'
-import IconSelector from '../IconSelector/IconSelector'
+import IconSelector from '../IconSelector'
 
 const InputView = ({labelText,prePlaceholder,iconType,value,inputName}) => {
   return (

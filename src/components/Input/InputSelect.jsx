@@ -1,5 +1,5 @@
 import React from 'react'
-import IconSelector from '../IconSelector/IconSelector'
+import IconSelector from '../IconSelector'
 
 const InputSelect = ({inputName,labelText,error,values,handleChange,iconType}) => {
   return (

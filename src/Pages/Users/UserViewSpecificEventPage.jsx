@@ -1,20 +1,13 @@
 import React from 'react'
-import Header from '../../components/Header/Header'
-import Sidebar from '../../components/Sidebar/Sidebar'
-import UserViewSpecificEvent from '../../components/UserViewSpecificEvent/UserViewSpecificEvent'
+import UserViewSpecificEvent from '../../components/UserViewSpecificEvent'
+import PageContainer from '../PageContainer'
 
 
-const UserViewSpecificEventPage = ({userObject, userID}) => {
+const UserViewSpecificEventPage = ({userObject, userID, logged}) => {
   return (
-    <div className='h-screen overflow-hidden flex flex-col '>
-        <Header userObject={userObject} />
-        <div className="grid lg:grid-cols-[20%_80%] h-full  ">
-            <div className=" hidden lg:flex ">
-                <Sidebar />
-            </div>
-            <UserViewSpecificEvent userID={userID} userObject={userObject} />
-        </div>
-    </div>
+    <PageContainer userObject={userObject} logged={logged} >
+      <UserViewSpecificEvent userID={userID} userObject={userObject} />
+    </PageContainer>
   )
 }
 

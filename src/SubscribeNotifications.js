@@ -1,67 +1,4 @@
-import { getCookie } from "./UtilityFunctions";
-
-export const askPermission = async (setNotifyState) => {
-  
-  try {
-    let uid = getCookie("uid")
-    let adminUid = getCookie("adminUid")
-    let log = getCookie("log")
-
-    if( !log){
-        console.log("User is not logged in and does not have ID",uid, log);
-        return
-    }
-
-    if( !uid && !adminUid){
-      console.log("User is not logged in and does not have ID",uid, log);
-      return
-    }
-
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-        await setNotifyState(true)
-        await subscribeUser();
-      console.log('Notification permission granted.');
-    } else {
-      console.log('Unable to get permission to notify.');
-    }
-  } catch (error) {
-    console.error('An error occurred while asking for notification permission', error);
-  }
-};
-
-export const subscribeUser = async () => {
-  const swRegistration = await navigator.serviceWorker.ready;
-  const applicationServerKey = urlBase64ToUint8Array(`${process.env.REACT_APP_VAPID_KEY}`);
-  try {
-    const subscription = await swRegistration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey
-    });
-    // console.log('User is subscribed:' , subscription);
-    sendSubscriptionToServer(subscription);
-  } catch (error) {
-    console.error('Failed to subscribe the user: ', error);
-  }
-};
-
-const sendSubscriptionToServer = async (subscription) => {
-  // Send the subscription details to your server
-  try {
-    console.log("Sending subscription to server");
-    let uid = getCookie("uid")
-    let adminUid = getCookie("adminUid")
-    await fetch(`${process.env.REACT_APP_API_URL}/subscribe-notify`, {
-      method: 'POST',
-      body: JSON.stringify({uid,subscription,adminUid}),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  } catch (error) {
-    console.error('Error sending subscription to server: ', error);
-  }
-};
+import { RequestSubscribeNotify } from "./RequestFunction";
 
 const urlBase64ToUint8Array = (base64String) => {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -75,5 +12,42 @@ const urlBase64ToUint8Array = (base64String) => {
   }
   return outputArray;
 };
+
+export const askPermission = async () => {
+  console.log("Inside the Permission");
+  
+  try {
+    console.log("Inside the Permission 2");
+    const permission = await Notification.requestPermission();
+    console.log("Inside the Permission 3");
+    console.log("Permission: ", permission);
+    
+    if (permission === 'granted') {                
+      await HandleUserPushNotificationObject();
+    } else {
+      console.log('Unable to get permission to notify.');
+    }
+  } catch (error) {
+    console.error('An error occurred while asking for notification permission', error);
+  }
+};
+
+
+export const HandleUserPushNotificationObject = async() => {
+  try {    
+
+      const swRegistration = await navigator.serviceWorker.ready;
+      const applicationServerKey = urlBase64ToUint8Array(`${process.env.REACT_APP_VAPID_KEY}`);
+      const subscription = await swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey
+      });
+      console.log('User is subscribed:' , subscription);
+      await RequestSubscribeNotify(subscription);
+      console.log('Notification permission granted.');
+  } catch (error) {
+    console.error('An error occurred while asking for notification permission', error);
+  }
+}
 
 

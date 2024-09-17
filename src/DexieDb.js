@@ -14,7 +14,7 @@ export async function DexieUpdateUserObject(data) {
         Clear the DB 
         Insert the new userObject as the first record in the IndexedDB User Table
     */
-   console.log(data,"This is the data");
+//    console.log(data,"This is the data");
     try {
         await db.User.clear()
         await db.User.put({id: 1, data});
@@ -28,7 +28,7 @@ export async function DexieUpdateUserObject(data) {
 export async function DexieGetUserObject() {
     try {
         const schedule = await db.User.get(1);
-        console.log(`UserObject retrieved:`, schedule.data);
+        // console.log(`UserObject retrieved:`, schedule.data);
         return schedule.data;
     } catch (error) {
         console.error(`Error retrieving userObject:`, error);

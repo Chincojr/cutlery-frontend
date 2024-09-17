@@ -1,7 +1,7 @@
 import React from 'react'
-import IconSelector from '../IconSelector/IconSelector'
+import IconSelector from '../IconSelector'
 import uploadImage from '../../assets/uploadImage.png'
-import Uploader from '../Uploader/Uploader'
+import Uploader from '../Uploader'
 
 
 

@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import { DexieGet } from './DexieDb';
 
 
 export function isValidEmail(email) {
@@ -129,75 +128,97 @@ export function deleteCookie(cookieName) {
 }
 
 export const HandleLogOut = () => {
-  deleteCookie("log")
+  deleteCookie("type")
   deleteCookie("uid")
-  deleteCookie("adminUid")
   window.location.href = 'login'
 }
 
-export function getCookie(name) {
-  // Create a name pattern to search for
-  let nameEQ = name + "=";
-  // Split the cookie string into individual cookies
-  let ca = document.cookie.split(';');
-  // Loop through the cookies array
-  for(let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      // Remove any leading spaces
-      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-      // Check if the cookie starts with the desired name
-      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+function SearchChat (chatInfo, searchText) {
+
+  const filteredMessages = JSON.parse(chatInfo.messages).filter(obj => {
+    let chatText = JSON.parse(obj).text
+    if (chatText && chatText.toLowerCase().includes(searchText.toLowerCase())) {
+      return JSON.stringify(obj);
+    }
+  });
+
+  return {
+      ...chatInfo,
+      messages : JSON.stringify(filteredMessages)
   }
-  // Return null if the cookie is not found
-  return null;
+
+}
+
+function SearchUserList (usersInformation, searchText) {
+  
+  var filteredUsers = {}
+  
+  Object.values(usersInformation).forEach(userInfo => {
+    if (userInfo.name && userInfo.name.toLowerCase().includes(searchText.toLowerCase())) {
+      filteredUsers = {
+        ...filteredUsers,
+        [userInfo.systemID] : userInfo
+      }
+    }    
+  });
+  
+  return filteredUsers;
 }
 
 export function SearchInfoBasedOfType(unfilteredInfo,searchText, type) {
  // Filter the info based of title and content
-  const filteredInfo = unfilteredInfo.filter(obj => {
-      switch (type) {
-        case "Events":
-          var title = obj.title 
-          var content = obj.content
 
-          var stringToSearch 
-          stringToSearch += title ? title : ""
-          stringToSearch += content ? content : ""
-
-          if ( stringToSearch && stringToSearch.toLowerCase().includes(searchText.toLowerCase()) ) {
-            return obj;
-          }
-          break;    
-        case "Reminders":
-          var title = obj.title 
-          var caption = obj.caption
-
-          var stringToSearch 
-          stringToSearch += title ? title : ""
-          stringToSearch += caption ? caption : ""
-          if ( stringToSearch && stringToSearch.toLowerCase().includes(searchText.toLowerCase()) ) {
-            return obj;
-          }
-          break;      
-        case "Notify":
+  // console.log(unfilteredInfo,searchText,type);  
+ 
+  if (type === "Chat") {
+    var filteredInfo = SearchChat(unfilteredInfo,searchText);
+  } else if (type === "UsersList") {
+    var filteredInfo = SearchUserList(unfilteredInfo,searchText)
+  }else {
+    var filteredInfo = unfilteredInfo.filter(obj => {
+        switch (type) {
+          case "Events":
             var title = obj.title 
-            var caption = obj.caption
-  
+            var content = obj.content
+
             var stringToSearch 
             stringToSearch += title ? title : ""
-            stringToSearch += caption ? caption : ""
+            stringToSearch += content ? content : ""
+
             if ( stringToSearch && stringToSearch.toLowerCase().includes(searchText.toLowerCase()) ) {
               return obj;
             }
-            break;     
-        default:
-          break;
-      }
+            break;    
+          case "Notify":
+              var title = obj.title 
+              var caption = obj.caption
+    
+              var stringToSearch 
+              stringToSearch += title ? title : ""
+              stringToSearch += caption ? caption : ""
+              if ( stringToSearch && stringToSearch.toLowerCase().includes(searchText.toLowerCase()) ) {
+                return obj;
+              }
+              break;  
+          case "Chat":
+              let chatText = JSON.parse(obj).text
+              if (chatText && chatText.toLowerCase().includes(searchText.toLowerCase())) {
+                return JSON.stringify(obj);
+              }
+              
+              break;
+          default:
+            break;
+        }
 
-  });
+    });    
+  }
+
 
   return {filteredInfo,unfilteredInfo};
 }
+
+
 
 export function SortInfoBasedOfKey(order, sortBy,info){
   if (!order) {
@@ -362,106 +383,14 @@ export function SortPastTodayFuture (reminder){
 
 }
 
-export const CheckUserSeen = async () => {
-  try {
+export const CheckUserSeen = async (userObject) => {
+  let events = userObject && userObject.Event ? userObject.Event : [];
+  let notify = userObject && userObject.Notify ? userObject.Notify : [];
+  let eventsAndNotifyArr = [...events,...notify];
+  eventsAndNotifyArr.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  return eventsAndNotifyArr;
 
-    // const DBs = ["Event", "Notify", "Seen"]
-    // var DBData = {
-    //   Event: [],
-    //   Notify: [],
-    //   Seen: [],
-    // }
-
-    // const retrieveUserData = DBs.map(async (dbName) => {
-    //   try {
-    //     let dbInfo = await DexieGet(dbName)
-    //     DBData[dbName] = dbInfo;
-    //   } catch (error) {
-    //     console.log("Error retriving data from indexedDB");
-    //   }
-    // })
-
-    // await Promise.all(retrieveUserData);
-
-    // let Event = [];
-    // let Notify = [];
-
-    // if ( DBData.Seen.length > 0 ) {
-
-    //   let seenList = [];
-
-    //   DBData.Seen.forEach(seenObj => {
-    //     seenList.push(seenObj.systemID)
-    //   });
-
-    //   DBData.Event.forEach(eventsObj => {
-    //     if (!seenList.includes(eventsObj.systemID)) {
-    //       Event.push({...eventsObj, type: "Event"})
-    //     }
-    //   })
-
-    //   DBData.Notify.forEach(notifyObj => {
-    //     if (!seenList.includes(notifyObj.systemID)) {
-    //       Notify.push({...notifyObj, type: "Notify"})
-    //     }
-    //   })      
-    // } else {
-
-    //   DBData.Event.forEach(eventsObj => {
-    //       Event.push({...eventsObj, type: "Event"})
-    //   })
-
-    //   DBData.Notify.forEach(notifyObj => {
-    //     Notify.push({...notifyObj, type: "Notify"})
-    //   })      
-    // }
-
-    // if (Event.length === 0 && Notify.length === 0) {
-    //   return false;
-    // } else {
-    //   return [...Event,...Notify ]
-    // }
-
-    
-
-
-    
-  } catch (error) {
-    console.log(error);
-  }
 }
-
-export const DeleteMessageFromLocalStorage = (type, messageID) => {
-  // Retrieve all Pending Messages
-  var localStoragePendingMessages = JSON.parse(localStorage.getItem('pendingMsg')) || {};
-
-  // Check if there are no pending messages
-  if (!localStoragePendingMessages[type]) {
-    return;
-  }
-
-  const currentTypeMessages = localStoragePendingMessages[type];
-
-  // Check if the specific message exists
-  if (currentTypeMessages[messageID]) {
-    delete currentTypeMessages[messageID];
-  } else {
-    return;
-  }
-
-  // If there are no more messages of the current type, remove the type key
-  if (Object.keys(currentTypeMessages).length === 0) {
-    delete localStoragePendingMessages[type];
-  } else {
-    // Otherwise, update the type messages
-    localStoragePendingMessages[type] = currentTypeMessages;
-  }
-
-  // Update the Pending Messages in local storage
-  localStorage.setItem('pendingMsg', JSON.stringify(localStoragePendingMessages));
-  console.log("Deleted pending message", localStoragePendingMessages);
-}
-
 
 export function getBase64Size(base64) {
   base64 = base64.split(',')[1];
@@ -476,3 +405,23 @@ export function getBase64Size(base64) {
 
   return inBytes;
 }
+
+export function getCookie(cookieName) {
+  // Get all cookies from document.cookie
+  let cookies = document.cookie.split('; ');
+  
+  // Loop through all cookies
+  for (let cookie of cookies) {
+      // Split each cookie into name and value
+      let [name, value] = cookie.split('=');
+      
+      // Check if the current cookie name matches the one we're looking for
+      if (name === cookieName) {
+          return decodeURIComponent(value); // Return the cookie value after decoding it
+      }
+  }
+  
+  // Return null if the cookie is not found
+  return null;
+}
+

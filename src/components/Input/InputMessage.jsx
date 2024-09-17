@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react'
-import Uploader from '../Uploader/Uploader';
-import IconSelector from '../IconSelector/IconSelector';
+import Uploader from '../Uploader';
+import IconSelector from '../IconSelector';
 import testDisplay from '../../assets/download.png'
 import { ConvertImageInfoToDisplay, generateRandomString, getBase64Size } from '../../UtilityFunctions';
-import { WSSend } from '../../Webocket';
+import { WSSend } from '../../WebSocket';
 
 
 
 
-const InputMessage = ({selectReply, handleClearSelectReply, userID, to, type,isAdmin, setPendingMessages}) => {
+const InputMessage = ({selectReply, handleClearSelectReply, userID, to, chatType,isAdmin, setPendingMessages,userObject}) => {
 
     // console.log("Select Reply", selectReply, userID);
     const [message, setMessage] = useState("")
@@ -27,7 +27,7 @@ const InputMessage = ({selectReply, handleClearSelectReply, userID, to, type,isA
         let newImages = []
         let newSelectImgs = [...pickedImg]
         let currentSize = 0
-        let maxSize =  4 * 1024 * 1024;
+        let maxSize =  40 * 1024 * 1024;
         // get a list of all the prev selected images name
         selectImages.forEach(img => {
             prevSelectImgsName.push(img.name)
@@ -72,7 +72,7 @@ const InputMessage = ({selectReply, handleClearSelectReply, userID, to, type,isA
         
     };
 
-    const HandleSend = () => {
+    const HandleSend = async () => {
         if (message || selectImages.length > 0) {
             /*
                 Disable textaraea
@@ -92,7 +92,7 @@ const InputMessage = ({selectReply, handleClearSelectReply, userID, to, type,isA
             //create message object
             const messageID = generateRandomString();
             const messageObject = {
-                    type,
+                    type: chatType,
                     message: {
                         recipient: to,
                         from: userID,
@@ -105,33 +105,18 @@ const InputMessage = ({selectReply, handleClearSelectReply, userID, to, type,isA
                     messageID,
                     isAdmin,
                     link: isAdmin ? "/contact" : "/admin/view/msg/" + to 
-            }
+            }            
 
-            // merge message object with existence message in the localstorage
-            let newPendingMessages = {};
-
-            var localStoragePendingMessages = JSON.parse(localStorage.getItem('pendingMsg')) || {};
-            const currentTypeMessages = localStoragePendingMessages[type] || {};
-
-            newPendingMessages = {
-                ...currentTypeMessages,
-                [messageID]: messageObject
-            };
-
-            const updatedPendingMessages = {
-                ...localStoragePendingMessages,
-                [type]: newPendingMessages
-            };
-
-            localStorage.setItem('pendingMsg', JSON.stringify(updatedPendingMessages));
-
-            console.log("updated local storage messages",updatedPendingMessages);
 
             // replace the pending messages with that of localstorage
-            setPendingMessages(newPendingMessages);
+            setPendingMessages((prevPendingMessages) => ({
+                ...prevPendingMessages,
+                [messageID]: messageObject
+            }));            
+            console.log("Pending Message Input: ",messageObject);
 
             // send message tp backend
-            WSSend(messageObject);
+            await WSSend(messageObject);
 
             // clear messages , images and reply
             setMessage("");
@@ -157,7 +142,7 @@ const InputMessage = ({selectReply, handleClearSelectReply, userID, to, type,isA
             <div className="flex flex-col text-[14px] p-1 bg-white w-full border-l-[3px] border-[#3498db] rounded-l-lg ">
                 <div className="flex justify-between items-center">
                     <div className="text-[12px] font-bold">
-                        {selectReply.from === userID ? "You" : selectReply.from}
+                        {selectReply.from === userID ? "You" : !userObject ? "" : isAdmin ? userObject.UsersInformation[selectReply.from].name : userObject.Admin.name }
                     </div>
                     <button onClick={handleClearSelectReply} className="rotate-45 w-fit outline-none p-1 ">
                         <IconSelector type={"Plus"} size={25} />

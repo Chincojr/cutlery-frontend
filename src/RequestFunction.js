@@ -1,13 +1,78 @@
 import axios from 'axios';
+import { getCookie } from './UtilityFunctions';
+
+axios.interceptors.request.use((config) => {
+  // Retrieve values from local storage or cookies
+  const token = localStorage.getItem('token');  // Or retrieve it from another source
+  const type = getCookie('type');
+  const uid = getCookie('uid');
+
+  // Add auth parameters as query parameters
+  if (token || type || uid) {
+      config.params = {
+          ...config.params, // Preserve existing params
+          auth_token: token || "",  // Add token if available
+          type: type || "",         // Add type if available
+          uid: uid || ""            // Add uid if available
+      };
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
+export const RequestSubscribeNotify = async(subscription) => {
+  try {
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/subscribe-notify`,JSON.stringify({subscription}))      
+    return true
+  } catch (error) {    
+    console.log("Error Request Subscribe Notify: ",error);    
+    return false
+  }
+}
+
+export const RequestSeen = async(seenType,id) => {
+  try {
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/seen`,JSON.stringify({seenType,id}))      
+    return true
+  } catch (error) {    
+    return false
+  }
+}
+
+export const RequestProfileChange = async({name,image}) => {
+  try {
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/profile-change`,JSON.stringify({name,image}))      
+    return true
+  } catch (error) {    
+    return false
+  }
+}
+
+export const RequestAddReminderInformation = async(repeatValue,repeatType) => {
+  try {
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/reminder`,JSON.stringify({repeatType,repeatValue}))
+    return true
+  } catch (error) {
+    return false
+  }
+}
+
+export const RequestUserInfo = async () => {
+  try {
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/user-info`)
+    return {status:response.status, data:response.data}
+  } catch (error) {
+    return {status: error.response ? error.response.status : 500 };
+  }
+}
 
 export const RequestForVerificationCode = async (verifyId,email) => {
     try {
         let response = await axios.post(`${process.env.REACT_APP_API_URL}/send-otp`, JSON.stringify({verifyId,email}))
-
         if (response.status === 200) {
           return true
-        }
-      
+        }      
         return false;
     } catch (error) {
       return false;
@@ -42,33 +107,18 @@ export const RequestCheckEmailUniqueness = async (email) => {
 export const RequestUserLogin = async (email,password,type) => {
   try {
     let response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, JSON.stringify({email,password,type}))
-
     return {status:response.status,data:response.data}
   } catch (error) {
+    // console.log("Error: Request User Login ",error);    
     return {status: error.response ? error.response.status : 500 };
   }
 }
 
-export const RequestAdminUserLogin = async (email,password) => {
-  try {
-    let response = await axios.post(`${process.env.REACT_APP_API_URL}/admin-login`, JSON.stringify({email,password}))
-
-    return {status:response.status,data:response.data}
-  } catch (
-    error) {
-    return {status: error.response ? error.response.status : 500 };
-  }
-}
 
 export const RequestCreateNotification = async (obj) => {
   try {
-      let response = await axios.post(`${process.env.REACT_APP_API_URL}/notify`, JSON.stringify(obj))
-
-      if (response.status === 200) {
-        return true
-      }
-    
-      return false;
+      let response = await axios.post(`${process.env.REACT_APP_API_URL}/create-notify`, JSON.stringify(obj))
+      return true;
   } catch (error) {
     return false;
   }
@@ -77,13 +127,8 @@ export const RequestCreateNotification = async (obj) => {
 
 export const RequestCreateEvent = async (obj) => {
   try {
-      let response = await axios.post(`${process.env.REACT_APP_API_URL}/event`, JSON.stringify(obj))
-
-      if (response.status === 200) {
-        return true
-      }
-    
-      return false;
+      let response = await axios.post(`${process.env.REACT_APP_API_URL}/create-event`, JSON.stringify(obj))    
+      return true;
   } catch (error) {
     return false;
   }
@@ -103,56 +148,42 @@ export const RequestCreateReminder = async (obj) => {
   }
 }
 
-export const RequestUserLogged = async(uid,log,adminUid) => {
+export const RequestLogged = async() => {
   try {
-    let response = await axios.post(`${process.env.REACT_APP_API_URL}/logged`, JSON.stringify({uid,log,adminUid}))
-
-    if (response.status === 200) {
-      return true
-    }
+    let response = await axios.get(`${process.env.REACT_APP_API_URL}/logged`)    
+    return true        
+  } catch (error) {
+    console.log("Request Logged: ",error);    
     return false;
+  }
+}
+
+export const RequestDeleteInfo = async(deleteType,ids,) => {
+  try {
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/delete`, JSON.stringify({deleteType,ids}))
+    return true;
   } catch (error) {
     return false;
   }
 }
 
-export const RequestDeleteInfo = async(type,uid,ids,adminUid) => {
+export const RequestEditEvent = async (event) => {
   try {
-    let response = await axios.post(`${process.env.REACT_APP_API_URL}/delete`, JSON.stringify({type,uid,ids,adminUid}))
-
-    console.log(response.data,'lorem');
-    if (response.status === 200) {
-      return true
-    }
-    return false;
-  } catch (error) {
-    return false;
-  }
-}
-
-export const RequestEditEvent = async (obj,admin) => {
-  try {
-      let response = await axios.put(`${process.env.REACT_APP_API_URL}/event`, JSON.stringify({obj,admin}))
-
+      let response = await axios.post(`${process.env.REACT_APP_API_URL}/edit-event`, JSON.stringify(event))
       if (response.status === 200) {
         return true
-      }
-    
+      }    
       return false;
   } catch (error) {
+    console.log("Edit Event: ",error);    
     return false;
   }
 }
 
-export const RequestEditNotification = async (obj,admin) => {
+export const RequestEditNotification = async (notification) => {
   try {
-      let response = await axios.put(`${process.env.REACT_APP_API_URL}/notify`, JSON.stringify({obj,admin}))
-
-      if (response.status === 200) {
-        return true
-      }
-    
-      return false;
+      let response = await axios.post(`${process.env.REACT_APP_API_URL}/edit-notify`, JSON.stringify(notification))      
+      return true;
   } catch (error) {
     return false;
   }
