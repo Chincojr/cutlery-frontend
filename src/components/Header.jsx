@@ -27,7 +27,7 @@ const Header = ({displaySideBar, userObject,logged}) => {
 
                     <div className="flex gap-1">
                       <ProfilePicture />
-                      <Notifications />
+                      <Notifications userObject={userObject} />
                     </div>
                 </> 
                 :

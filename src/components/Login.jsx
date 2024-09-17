@@ -94,7 +94,6 @@ const HandleLogin = async () => {
         localStorage.setItem('token',verifyLoginInfo.data.token)
         setCookie('uid',verifyLoginInfo.data.uid,{path: "/", maxAge:864000})  
         setCookie('type',verifyLoginInfo.data.type,{path: "/", maxAge:864000})  
-
         window.location.href = "/"
         break;
     case 401:

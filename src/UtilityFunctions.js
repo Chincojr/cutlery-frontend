@@ -130,6 +130,7 @@ export function deleteCookie(cookieName) {
 export const HandleLogOut = () => {
   deleteCookie("type")
   deleteCookie("uid")
+  localStorage.removeItem("token")
   window.location.href = 'login'
 }
 
@@ -386,11 +387,43 @@ export function SortPastTodayFuture (reminder){
 export const CheckUserSeen = async (userObject) => {
   let events = userObject && userObject.Event ? userObject.Event : [];
   let notify = userObject && userObject.Notify ? userObject.Notify : [];
+  let type = getCookie("type");
+  let uid = getCookie("uid");
+  let eventsAndNotifyArr = [...events,...notify];
+  let unSeen = false
+  
+  eventsAndNotifyArr.forEach(obj => {
+    if (obj.seen) {
+      switch (type) {
+        case "Admin":
+          unSeen = obj.seen[uid] ? false : true
+          break;
+        case "Client":
+          unSeen = obj.seen ? true : false
+          break;                    
+        default:
+          break;
+      }
+    }
+
+    if (unSeen) {
+      return;
+    }
+
+  });
+  return unSeen;
+
+}
+
+export const SortEventAndNotifyBasedOfDateCreated = async (userObject) => {
+  let events = userObject && userObject.Event ? userObject.Event : [];
+  let notify = userObject && userObject.Notify ? userObject.Notify : [];
   let eventsAndNotifyArr = [...events,...notify];
   eventsAndNotifyArr.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   return eventsAndNotifyArr;
 
 }
+
 
 export function getBase64Size(base64) {
   base64 = base64.split(',')[1];

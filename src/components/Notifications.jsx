@@ -4,24 +4,24 @@ import { useEffect } from 'react'
 import { CheckUserSeen } from '../UtilityFunctions'
 
 
-const Notifications = () => {
+const Notifications = ({userObject}) => {
 
   const [unSeen, setUnSeen] = useState(false)
 
   useEffect(() => {
-    async function checkNotify() {
-      let notifys = await CheckUserSeen();
-
-      console.log("Notification list: ", notifys);
-
-      if (notifys) {
+    async function checkForUnSeenNotifyOrEvent() {
+      let unSeenEventOrNotify = await CheckUserSeen(userObject);
+      if (unSeenEventOrNotify) {
         setUnSeen(true)
       } else {
         setUnSeen(false)
       }
     }
-    checkNotify()
-  }, [])
+    if (userObject) {
+      checkForUnSeenNotifyOrEvent()
+    }
+    
+  }, [userObject])
   
 
   return (

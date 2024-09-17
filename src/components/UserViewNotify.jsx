@@ -1,22 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react'
 import IconSelector from './IconSelector'
 import dayjs from 'dayjs'
-import { CheckUserSeen, getMonthNameWithSuffix } from '../UtilityFunctions'
+import { SortEventAndNotifyBasedOfDateCreated, getMonthNameWithSuffix } from '../UtilityFunctions'
 import { useCookies } from 'react-cookie'
 import { allCookies } from '../UtilityObjs'
 import { RequestSeen } from '../RequestFunction'
 
-const NotifyComponent = ({obj,hasUserSeenNotification,monthName,dayWithSuffix,index}) => {
+const NotifyComponent = ({hasUserSeenNotification,monthName,dayWithSuffix,text,title,link,systemID,icon}) => {
 
     const notifyRef = useRef(null);
     const [seenNotify, setSeenNotify] = useState(false)
+    console.log("NotifyComponent: ", title,hasUserSeenNotification);
+    
   
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && !seenNotify && !hasUserSeenNotification) {
               // Triggering async action when the element becomes visible
-              RequestSeen("Notify", obj.systemID)
+              RequestSeen("Notify", systemID)
                 .then(() => {
                   setSeenNotify(true);
                   // Stop observing after action is done
@@ -46,18 +48,18 @@ const NotifyComponent = ({obj,hasUserSeenNotification,monthName,dayWithSuffix,in
 
 
     return (
-        <a ref={notifyRef} href={obj.link ? obj.link : "#"} className="">
+        <a ref={notifyRef} href={link ? link : "#"} className="">
             <div className="neutral max-w-[700px] p-2 rounded w-full">
                 <div className="text-[12px] text-end accentText px-3">
                     {hasUserSeenNotification ? "" : "New"}
                 </div>
                 <div className='items-center grid grid-cols-[10%_90%]  '>
                     <div className="pr-2 flex items-center justify-center">
-                        <IconSelector type={"Notify"} />
+                        <IconSelector type={icon} />
                     </div>
                     <div className="text-[12px] ">
-                        <div className="font-bold primaryText text-base">{obj.title}</div>
-                        <div className={` font-bold ${obj.caption && obj.caption.length > 50 ? "truncate" : ""} `}>{obj.caption}</div>
+                        <div className="font-bold primaryText text-base">{title}</div>
+                        <div className={` font-bold ${text && text.length > 50 ? "truncate" : ""} `}>{text}</div>
                         <div className=" ">{monthName} {dayWithSuffix}</div>
                     </div>
                 </div>                                
@@ -74,12 +76,12 @@ const UserViewNotify = ({userID,userObject}) => {
 
   useEffect(() => {
     
-    async function checkNotify() {
-      let notificationList = await CheckUserSeen(userObject);
+    async function SortEventAndNotifications() {
+      let notificationList = await SortEventAndNotifyBasedOfDateCreated(userObject);
       setNotifications(notificationList);
 
     }
-    checkNotify()
+    SortEventAndNotifications()
 
   }, [userObject])
 
@@ -98,9 +100,10 @@ const UserViewNotify = ({userID,userObject}) => {
                     hasUserSeenNotification = obj.seen && JSON.parse(obj.seen) && JSON.parse(obj.seen)[userID] ? true : false
                 }
 
-                if (cookies.uid) {
-                    hasUserSeenNotification = obj.seen ? true : false
+                if (cookies.type === "Client") {
+                  hasUserSeenNotification = obj.seen ? true : false
                 }
+
 
 
 
@@ -110,25 +113,9 @@ const UserViewNotify = ({userID,userObject}) => {
                     <div key={index} className={` `}>
                         {
                             obj.caption !== undefined  ?
-                            <NotifyComponent obj={obj} hasUserSeenNotification={hasUserSeenNotification} monthName={monthName} dayWithSuffix={dayWithSuffix} index={index} />
+                              <NotifyComponent hasUserSeenNotification={hasUserSeenNotification} monthName={monthName} dayWithSuffix={dayWithSuffix} link={obj.link} text={obj.caption} systemID={obj.systemID} title={obj.title} icon={"Notify"} />
                             : obj.content !== undefined && !hasUserSeenNotification ?
-                            <a href={`/event/${obj.systemID}`} className="">
-                                <div className='neutral p-2 rounded place-items- w-full grid grid-cols-[10%_90%] max-w-[700px] '>
-                                    <div className="pr-2 flex items-center justify-center">
-                                        {
-                                            obj.image ? (
-                                                <img src={`${process.env.REACT_APP_IMAGE_URL}${obj.image}`} alt="" className="object-fit" />
-                                            ) : (
-                                                <IconSelector type={"Event"} />
-                                            )
-                                        }
-                                    </div>
-                                    <div className="text-[12px] ">
-                                        <div className="font-bold primaryText text-base">{obj.title}</div>
-                                        <div className=" ">{monthName} {dayWithSuffix}</div>
-                                    </div>
-                                </div>                                
-                            </a>
+                              <NotifyComponent hasUserSeenNotification={hasUserSeenNotification} monthName={monthName} dayWithSuffix={dayWithSuffix} link={`/event/${obj.systemID}`} systemID={obj.systemID} title={obj.title} icon={"Event"} />
                             : <></>
                         }
                     </div>

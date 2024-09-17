@@ -53,11 +53,7 @@ const RouteFile = () => {
             await DexieUpdateUserObject(userInfo.data)  
             setCookie('update',true,{path: "/", maxAge:1200})  
             setRefreshCount(refreshCount + 1);
-        } else {
-            removeCookie("uid")
-            removeCookie("type")
-            localStorage.removeItem("token")                  
-        }        
+        }       
       } else {
         setLoading(false)
       }
