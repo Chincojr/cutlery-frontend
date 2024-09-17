@@ -48,7 +48,7 @@ const NotifyComponent = ({hasUserSeenNotification,monthName,dayWithSuffix,text,t
 
 
     return (
-        <a ref={notifyRef} href={link ? link : "#"} className="">
+        <a ref={icon === "Notify" ? notifyRef : null} href={link ? link : "#"} className="">
             <div className="neutral max-w-[700px] p-2 rounded w-full">
                 <div className="text-[12px] text-end accentText px-3">
                     {hasUserSeenNotification ? "" : "New"}
@@ -114,7 +114,7 @@ const UserViewNotify = ({userID,userObject}) => {
                         {
                             obj.caption !== undefined  ?
                               <NotifyComponent hasUserSeenNotification={hasUserSeenNotification} monthName={monthName} dayWithSuffix={dayWithSuffix} link={obj.link} text={obj.caption} systemID={obj.systemID} title={obj.title} icon={"Notify"} />
-                            : obj.content !== undefined && !hasUserSeenNotification ?
+                            : obj.content !== undefined  ?
                               <NotifyComponent hasUserSeenNotification={hasUserSeenNotification} monthName={monthName} dayWithSuffix={dayWithSuffix} link={`/event/${obj.systemID}`} systemID={obj.systemID} title={obj.title} icon={"Event"} />
                             : <></>
                         }
