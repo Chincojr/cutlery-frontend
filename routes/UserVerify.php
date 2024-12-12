@@ -1,74 +1,86 @@
-<?php   
+<?php
 
-function handleVerifyEndpoint (){
+use PHPUnit\Framework\TestStatus\Error;
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+function handleSendOTPEndpoint ($testModeData = false){
+
+    if ( isset($testModeData) || $_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
-            $requestBody = json_decode(file_get_contents('php://input'), true);
+            $requestBody = $testModeData ? $testModeData : json_decode(file_get_contents('php://input'), true);
 
-            if ( !$requestBody["verifyId"] ) {
-                http_response_code(400); // Bad Request
-                echo 'Invalid request data';
-                return;
+            if (
+                !isset($requestBody) || 
+                !isset($requestBody["verifyId"]) ||
+                !is_string($requestBody["verifyId"]) || 
+                !isset($requestBody["email"]) ||
+                !is_string($requestBody["email"]) 
+            ){
+                throw new Error("Invalid request data",400);
             }
 
             $code = oneTimeCode();
             $verifyId = $requestBody["verifyId"];
+            $email = $requestBody["email"];      
+            $insertObject = [
+                "verifyId" => $verifyId, 
+                "code" => $code
+            ];
 
-            $db = getDBConnection();
-            $stmt = $db->prepare("INSERT INTO Verify ( verifyId,code ) VALUES ('$verifyId','$code') ");
-            $stmt->execute();
+            DBInsert("Verify", $insertObject, "Error while generating OTP",400);
+            
+            $emailInfo = [
+                'to' => $email,
+                'subject' => "Sign-up OTP ",
+                'message' => "
+                    Hello $email,
+
+                    The OTP for your Cutlery account.
+                    
+                    Your code is: $code
+                "
+            ];
+
+            SendEmail($emailInfo);
 
             
-
-            print_r("verfication sent");
-            return;
-        } catch (Exception $error) {
-            error_log($error);
-            http_response_code(500); // Internal Server Error
-            echo 'Failed';
-            return;
+            return $code;
+        } catch (Throwable $th) {            
+            $responseCode = strlen($th->getCode()) !== 3 ? 500 : $th->getCode();
+            echo $th->getMessage();                                        
+            http_response_code($responseCode); // Internal Server Error
+            return false;
         }
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+}
+
+function handleVerifyEmailEndpoint ($testModeData = false){
+
+    if ( isset($testModeData) || $_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
-            $requestBody = json_decode(file_get_contents('php://input'), true);
+            $requestBody = $testModeData ? $testModeData : json_decode(file_get_contents('php://input'), true);
 
-            print_r($requestBody);
-
-            if ( !$requestBody["verifyId"] || !$requestBody["code"] ) {
-                http_response_code(400); // Bad Request
-                echo 'Invalid request data';
-                return;
+            if ( 
+                !isset($requestBody) || 
+                !isset($requestBody["email"]) || 
+                !is_string($requestBody["email"])
+            ) {                
+                throw new Error("Invalid request data",400);
             }
 
-            $code = $requestBody["code"];
-            $verifyId = $requestBody["verifyId"];
+            $email = $requestBody["email"];                    
+            $verifyEmail = handleQuery("SELECT * FROM Users WHERE email = '$email'");
 
-            $db = getDBConnection();
-            $stmt = $db->prepare("DELETE FROM Verify WHERE verifyId = '$verifyId' AND code = '$code'");
-            $stmt->execute();
-            $rowCount = $stmt->rowCount();
-
-            if ($rowCount) {
-                print_r("verified and deleted ");
-                return;
+            if (count($verifyEmail->fetchAll()) !== 0) {
+                throw new Error("This email as already been used",409);                
             }
-
-            echo "Failed1";
-            http_response_code(404);
-
-            return;
-        } catch (Exception $error) {
-            error_log($error);
-            http_response_code(500); // Internal Server Error
-            echo 'Failed';
-            return;
+            
+            return true;
+        } catch (Throwable $th) {
+            $responseCode = strlen($th->getCode()) !== 3 ? 500 : $th->getCode();
+            echo $th->getMessage();
+            http_response_code($responseCode); // Internal Server Error
+            return false;
         }
     }
-
-
-
-
 }
