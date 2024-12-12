@@ -1,13 +1,21 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import DisplayMessage from './DisplayMessage'
 import IconSelector from './IconSelector'
 import Unavailable from './Unavailable'
 
 
-
-
-
-const ChatMessages = ({userObject,selectedChat,isAdmin,userID, chatType, onlineUsers,setSelectedChat,connectivityState,setPendingMessages,pendingMessages}) => {
+const ChatMessages = ({
+        userObject,
+        selectedChat,
+        isAdmin,
+        userID, 
+        chatType, 
+        onlineUsers,
+        setSelectedChat,
+        connectivityState,
+        setPendingMessages,
+        pendingMessages
+    }) => {
 
   const [displaySearch, setDisplaySearch] = useState(false)
   const [selectedMessages, setSelectedMessages] = useState({})  
@@ -113,7 +121,6 @@ const ChatMessages = ({userObject,selectedChat,isAdmin,userID, chatType, onlineU
     }
   }
 
-
   const HandleGroupActions = (type) => {
     switch (type) {
         case "Copy":
@@ -147,13 +154,24 @@ const ChatMessages = ({userObject,selectedChat,isAdmin,userID, chatType, onlineU
         default:
             break;
     }
-  }
+  }    
 
+  useEffect(() => {
+    setDisplaySearch(false)
+    setSelectedMessages({})
+    setSearchInfo({
+        text: "",
+        foundMessageID: null,
+        foundlist: null,
+        foundMessageIndex:null
+    })
 
+  }, [selectedChat])
   
+ 
+  console.log("Online users in ChatMessages: ", onlineUsers);
   
-    
-
+      
   return (
     <div className="flex flex-col overflow-auto border-l-2 border-[#ecf0f1] ">
         <div className={`text-white ${connectivityState ? "secondary" :"accent"} text-center text-[12px] font-semibold `}>{connectivityState ? "You are Online" : "You are offline"}</div>
@@ -258,7 +276,7 @@ const ChatMessages = ({userObject,selectedChat,isAdmin,userID, chatType, onlineU
                     setPendingMessages={setPendingMessages} 
                     pendingMessages={pendingMessages}
                     foundMessageID={searchInfo.foundMessageID}
-                    messageRefs={messageRefs}
+                    messageRefs={messageRefs}                    
                 />
             </>
             : 

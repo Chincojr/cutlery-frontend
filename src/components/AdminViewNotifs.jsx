@@ -1,28 +1,76 @@
 import React, { useEffect, useState } from 'react'
-import { DexieGet } from '../DexieDb';
 import Unavailable from './Unavailable';
 import SearchBar from './SearchBar';
 import Sort from './Sort';
 import BulkDelete from './BulkDelete';
 
-const adminNotifySortFunctions = ["Title","Date created","Date modified"]
+/**
+ * Array of functions used to sort admin notifications.
+ * 
+ * This array contains the keys by which admin notifications can be sorted.
+ * The available sort options include sorting by title, date created, and date modified.
+ * 
+ * @type {Array<string>}
+ */
+const adminNotifySortFunctions = ["Title", "Date created", "Date modified"];
 
 
+/**
+ * AdminViewNotifs component for viewing and managing notifications.
+ * 
+ * This component renders a table for viewing notifications, a search bar for
+ * filtering notifications, and a sorting component for sorting notifications.
+ * It also renders a bulk select and delete component for deleting multiple
+ * notifications at once.
+ * 
+ * The component takes in a userObject prop, which should contain the user's
+ * notification data. It uses this data to populate the table and other UI
+ * components.
+ * 
+ * @param {object} userObject - The object containing the user's notification data.
+ * @returns {JSX.Element} The rendered component displaying the notifications table and controls.
+ */
 const AdminViewNotifs = ({userObject}) => {
     
+  /**
+   * State hook for notifications list.
+   * @type {Array}
+   */
   const [notifs, setNotifs] = useState([])
+
+  /**
+   * State hook for tracking selected notifications for bulk delete.
+   * @type {Array}
+   */
   const [bulkDelete, setBulkDelete] = useState([])
 
   useEffect(() => {
+
+    /**
+     * Fetches and sets the user's notifications if available.
+     * 
+     * This asynchronous function checks if the userObject is defined
+     * and contains a Notify property. If these conditions are met,
+     * it updates the notifs state with the user's notification data.
+     */
       const GetNotifs = async() => {
-          let adminNotifs = await DexieGet("Notify") 
-          if (adminNotifs) {
-              setNotifs(adminNotifs)
-          }
+        if (userObject && userObject.Notify) {            
+            setNotifs(userObject.Notify)
+        }
       }
       GetNotifs()
   }, [userObject]) 
 
+  /**
+   * Handles the bulk select/deselect checkboxes for notifications.
+   * 
+   * When a checkbox is checked, it adds the event ID to the bulkDelete
+   * state array. If the checkbox is unchecked, it removes the event ID
+   * from the bulkDelete state array. If the "all" checkbox is
+   * checked/unchecked, it sets the bulkDelete state to either ["all"] or
+   * an empty array.
+   * @param {object} event - The event object from the checkbox element.
+   */
   const HandleBulk = (event) => {
     let { name} = event.target;
 
@@ -50,7 +98,7 @@ const AdminViewNotifs = ({userObject}) => {
         <div className="flex px-2 w-full justify-between">
             <BulkDelete bulkDelete={bulkDelete} info={notifs} type={"Notify"} />
             <div className="sm:w-[350px] w-full">
-                <SearchBar searchInfo={notifs && notifs.length > 0 ? notifs : []} setSearchInfo={setNotifs} type={"Notify"} />
+                <SearchBar searchInfo={notifs} setSearchInfo={setNotifs} type={"Notify"} />
             </div>
         </div>
 
@@ -73,7 +121,7 @@ const AdminViewNotifs = ({userObject}) => {
                 <div className="w-full h-full flex flex-col overflow-y-auto">
                 {
                     notifs.map((obj,index) => {
-                        // console.log("This are notifs obj", obj.id);
+                        
                         let created = obj.created_at.split(" ")
                         let createdDate = created[0];
                         let createdTime = created[1];

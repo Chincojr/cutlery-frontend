@@ -2,6 +2,12 @@ import React from 'react'
 import UserViewEvents from '../../components/UserViewEvents'
 import PageContainer from '../PageContainer'
 
+/**
+ * The User View Events Page, displays the upcoming events
+ * @param {object} userObject - The user object
+ * @param {boolean} logged - Whether the user is logged in or not
+ * @returns {ReactElement} The JSX element of the user view events page
+ */
 const UserViewEventsPage = ({userObject,logged}) => {
   return (
     <PageContainer userObject={userObject} logged={logged} >

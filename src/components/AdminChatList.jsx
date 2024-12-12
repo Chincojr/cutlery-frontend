@@ -4,22 +4,29 @@ import Unavailable from './Unavailable'
 import { useParams } from 'react-router-dom'
 import SearchBar from './SearchBar'
 
-const ChatList = ({setSelectedChat,selectedChat, userObject}) => {
-
+const AdminChatList = ({setSelectedChat,selectedChat, userObject}) => {
 
   const [searchText, setSearchText] = useState("")
-  const [usersInformation, setUserInformation] = useState([])
+  const [chatList, setChatList] = useState([])
+  const [unFilteredChatList, setUnFilteredChatList] = useState([])
   let {msgID} = useParams()
 
-
   const HandleSearch = (event) => {
-      setSearchText(event.target.value)
+      let value = event.target.value
+      console.log("ChatList: ", chatList, value);    
+      if (chatList && value) {
+        let listToUse = unFilteredChatList && unFilteredChatList.length > 0 ? unFilteredChatList : chatList
+        let filteredChatList = listToUse.filter(chat => chat.name && chat.name.toLowerCase().includes(value.toLowerCase().trim()))
+        setChatList(filteredChatList)
+      } else {
+        setChatList(unFilteredChatList)
+      }
+      setSearchText(value)
   }
 
   const HandleBack = () => {
       setSearchText("")
   }
-
 
   useEffect(() => {
     /*
@@ -61,24 +68,18 @@ const ChatList = ({setSelectedChat,selectedChat, userObject}) => {
 
     const SelectUserInformation = () => {
         if (userObject && userObject.UsersInformation && Object.keys(userObject.UsersInformation).length > 0) {
-            setUserInformation(userObject.UsersInformation)
+            setChatList(Object.values(userObject.UsersInformation))
+            setUnFilteredChatList(Object.values(userObject.UsersInformation))
         }
     }
 
     SelectUserInformation();
   }, [userObject])
+
+
+  console.log("ChatList: ", chatList);
   
-
-
-  
-
-
-
-
-
-  console.log("Chat list ", selectedChat);
-  
-
+    
 
   return (
     <div className="bg-white overflow-hidden flex flex-col rounded  ">
@@ -91,28 +92,26 @@ const ChatList = ({setSelectedChat,selectedChat, userObject}) => {
         <div className=" w-full flex flex-col gap-2 h-full overflow-hidden py-2  ">
 
             <div className="px-4 flex items-center h-fit">
-                <SearchBar searchInfo={usersInformation} setSearchInfo={setUserInformation} type={"UsersList"} />
-                {/* <button onClick={HandleBack} className={`${searchText ? "" : "hidden"}`}>
+                {/* <SearchBar searchInfo={chatList} setSearchInfo={setChatList} type={"UsersList"} /> */}
+                <button onClick={HandleBack} className={`${searchText ? "" : "hidden"}`}>
                     <IconSelector type={"ArrowBack"} size={25} />
                 </button>
                 <div className="flex relative border-[2px] border-black px-2 py-1  w-full  rounded-[20px] items-center">
                     <label htmlFor='search' className="">
                         <IconSelector type={"Search"} size={20} />
                     </label>
-                    <input id='search' name='searchText' value={searchText} onChange={HandleSearch} autoComplete="off" type="text" className=" pl-1 bg-transparent w-full outline-none " placeholder='People, groups, messages' /> 
-                </div> */}
+                    <input id='search' name='searchText' value={searchText} onChange={HandleSearch} autoComplete="off" type="text" className=" pl-1 bg-transparent w-full outline-none " placeholder='Search Users list' /> 
+                </div>
             </div>
 
 
             <div className=" p-2 overflow-auto grid   ">
 
                 {
-                    usersInformation  ? 
+                    chatList  ? 
                         <>
                             {
-                                Object.keys(usersInformation).map((user, index) => {
-
-                                    let userObj = usersInformation[user]
+                                chatList.map((userObj, index) => {                                    
                                     return (
                                         <button onClick={() => setSelectedChat(userObj)} key={index} className={` ${selectedChat && selectedChat.systemID == userObj.systemID ? "bg-[#ecf0f1]" : ""} grid hover:bg-[#ecf0f1] px-2 grid-cols-[10%_90%] py-1 gap-2 h-[60px] w-full items-center border-black border-b-[1px]`}>
                                             <div className=" flex items-center justify-center rounded-full relative ">
@@ -137,9 +136,7 @@ const ChatList = ({setSelectedChat,selectedChat, userObject}) => {
                         </>
                     :
                     <Unavailable type={"Msg"} />
-
                 }
-
             </div>
 
         </div>
@@ -148,4 +145,4 @@ const ChatList = ({setSelectedChat,selectedChat, userObject}) => {
   )
 }
 
-export default ChatList
+export default AdminChatList

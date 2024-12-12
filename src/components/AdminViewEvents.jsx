@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { DexieGet } from '../DexieDb'
 import Unavailable from './Unavailable'
 import SearchBar from './SearchBar'
 import Sort from './Sort'
@@ -8,25 +7,45 @@ import BulkDelete from './BulkDelete'
 const adminEventSortFunctions = ["Title","Date created","Date modified"]
 
 
+/**
+ * The Admin View Events component, displays the user's events
+ * @param {object} userObject - The user object
+ * @returns {ReactElement} The JSX element of the admin view events page
+ */
 const AdminViewEvents = ({userObject}) => {
   
   const [events, setEvents] = useState([])
   const [bulkDelete, setBulkDelete] = useState([])
 
   useEffect(() => {
+    /**
+     * Fetches and sets the user's events if available.
+     * 
+     * This asynchronous function checks if the userObject is defined,
+     * contains an Event property, and if the Event array has at least
+     * one event. If these conditions are met, it updates the events
+     * state with the user's Event data.
+     */
       const GetEvents = async() => {
-          let adminEvents = await DexieGet("Event") 
-          console.log("Admin events: ", adminEvents );
-          if (adminEvents) {
-              console.log(adminEvents);
-              setEvents(adminEvents)
+          if (userObject && userObject.Event) {            
+            setEvents(userObject.Event)
           }
-      }
+      }      
       GetEvents()
   }, [userObject])
 
+  /**
+   * Handles the bulk select/deselect checkboxes for events.
+   * 
+   * When a checkbox is checked, it adds the event ID to the bulkDelete
+   * state array. If the checkbox is unchecked, it removes the event ID
+   * from the bulkDelete state array. If the "all" checkbox is
+   * checked/unchecked, it sets the bulkDelete state to either ["all"] or
+   * an empty array.
+   * @param {object} event - The event object from the checkbox element.
+   */
   const HandleBulk = (event) => {
-    let { value, name} = event.target;
+    let name = event.target.name;
 
     if (name === "all") {
         setBulkDelete(["all"])
@@ -46,13 +65,15 @@ const AdminViewEvents = ({userObject}) => {
     }
   }
   
+  console.log({events,events});
+  
 
   return (
     <div className='overflow-auto w-full flex flex-col gap-2 h-fit'>
         <div className="flex px-2 w-full justify-between">
             <BulkDelete bulkDelete={bulkDelete} info={events} type={"Event"} />
             <div className="sm:w-[350px] w-full">
-                <SearchBar searchInfo={events && events.length > 0 ? events : []} setSearchInfo={setEvents} type={"Events"} />
+                <SearchBar searchInfo={events} setSearchInfo={setEvents} type={"Events"} />
             </div>
         </div>
         <Sort setInfo={setEvents} info={events} sortFunctions={adminEventSortFunctions} />

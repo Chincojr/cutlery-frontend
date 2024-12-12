@@ -9,14 +9,61 @@ import ReminderPopUp from '../../components/ReminderPopUp'
 import { RequestProfileChange } from '../../RequestFunction'
 
 
+/**
+ * Renders the User Account page.
+ *
+ * This component allows users to view and update their profile information, 
+ * including their name and image. It also enables users to set reminders and 
+ * log out. The component handles various states such as loading, profile 
+ * changes, and reminder pop-up display.
+ *
+ * @param {Object} userObject - The object containing user-specific information.
+ * @param {boolean} logged - Indicates if the user is logged in.
+ * @returns {JSX.Element} The rendered User Account component.
+ */
 const UserAccount = ({userObject,logged}) => {
 
-  const [userImage, setUserImage] = useState(false)
-  const [userName, setUserName] = useState(null)
-  const [reminderDate, setReminderDate] = useState("Reminder not Set")
-  const [triggerReminderPopUp, setTriggerReminderPopUp] = useState(false)
+  /**
+   * State to store the user's image.
+   * @type {boolean|string}
+   */
+  const [userImage, setUserImage] = useState(false);
+
+  /**
+   * State to store the user's image.
+   * @type {boolean|string}
+  */
+    const [newUserImage, setNewUserImage] = useState(false);
+  
+  /**
+   * State to store the user's name.
+   * @type {string|null}
+   */
+  const [userName, setUserName] = useState(null);
+  
+  /**
+   * State to store the reminder date.
+   * @type {string}
+   */
+  const [reminderDate, setReminderDate] = useState("Reminder not Set");
+  
+  /**
+   * State to trigger the reminder pop-up.
+   * @type {boolean}
+   */
+  const [triggerReminderPopUp, setTriggerReminderPopUp] = useState(false);
+  
+  /**
+   * State to allow profile changes.
+   * @type {boolean}
+   */
   const [allowProfileChange, setAllowProfileChange] = useState(false);
-  const [loading, setLoading] = useState(false)
+  
+  /**
+   * State to indicate loading status.
+   * @type {boolean}
+   */
+  const [loading, setLoading] = useState(false);
 
   const HandleNameChange = (event) => {
     setAllowProfileChange(true);
@@ -27,6 +74,15 @@ const UserAccount = ({userObject,logged}) => {
     setUserImage(image);
   }
 
+  /**
+   * Resets the user's image and name to their original values.
+   *
+   * This function checks if the userObject is defined and attempts to reset
+   * the userImage and userName states to the user's original image and name.
+   * If the userObject is not defined, it sets the userImage to false and 
+   * userName to null. It also sets allowProfileChange to false to prevent
+   * any profile changes from being saved.
+   */
   const HandleClear = () => {
     if (userObject) {
       let image = userObject && userObject.imageID ? `${process.env.REACT_APP_IMAGE_URL}${userObject.imageID}` : null
@@ -42,12 +98,23 @@ const UserAccount = ({userObject,logged}) => {
 
   }
 
+  /**
+   * Handles profile changes by updating the user's name and/or image.
+   * 
+   * This function checks if the userObject is defined and if the user's
+   * name and/or image has changed. If the userObject is defined and
+   * changes are detected, it calls the RequestProfileChange function
+   * and passes the updated user information. If the request is successful,
+   * it reloads the page to reflect the changes. If the request is not
+   * successful, it sets the loading state to false and does not make
+   * any changes to the user's profile.
+   */
   const HandleProfileChange = async () => {
     setLoading(true)
     setAllowProfileChange(false)
     
     let image = userObject && userObject.imageID && `${process.env.REACT_APP_IMAGE_URL}${userObject.imageID}` === userImage ? null : userImage
-    let name = userObject && userObject.name === userName ? null : userName
+    let name = userName
 
     let profileUpdate = await RequestProfileChange({name,image});
     setLoading(false)
@@ -58,14 +125,25 @@ const UserAccount = ({userObject,logged}) => {
         
   }
 
+  /**
+   * Handles the display of the reminder pop-up by setting the triggerReminderPopUp
+   * state to true.
+   */
   const HandleDisplayReminderPopUp = () => {
     setTriggerReminderPopUp(true)
   }
 
+  /**
+   * Hides the reminder pop-up by setting the triggerReminderPopUp state to false.
+   */
   const HandleHideReminderPopUp = () => {
     setTriggerReminderPopUp(false)
   }
 
+  /**
+   * Handles the saving of the reminder pop-up by hiding the reminder pop-up and reloading
+   * the page to reflect the changes.
+   */
   const HandleSaveReminderPopUp = () => {
     HandleHideReminderPopUp();
     window.location.reload(true);
@@ -73,20 +151,32 @@ const UserAccount = ({userObject,logged}) => {
 
 
   useEffect(() => {
-
+    /**
+     * Sets the reminder date to the user's next reminder date if it exists
+     */
     if (userObject && userObject.nextReminder) {
       const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
       let date = new Date(userObject.nextReminder);
-      
+      /**
+       * The user's next reminder date in short date format (e.g. "Wed Aug 12 2026")
+       * @type {string}
+       */
       setReminderDate(date.toLocaleDateString('en-US', options))
     }
 
     
-    let image = userObject && userObject.imageID ? `${process.env.REACT_APP_IMAGE_URL}${userObject.imageID}` : null
+    /**
+     * The user's profile picture URL or null if they don't have one
+     * @type {string|null}
+     */
+    let image = userObject && userObject.imageID ? userObject.imageID : null
+    /**
+     * The user's name or null if they don't have one
+     * @type {string|null}
+     */
     let name = userObject && userObject.name ? userObject.name : null
     setUserImage(image);
     setUserName(name);
-
     
 
   }, [userObject])
@@ -104,7 +194,7 @@ const UserAccount = ({userObject,logged}) => {
               {
                 userImage ?
                   <div className="h-[100px] w-[100px] rounded-full border-[1px] border-black flex">
-                    <ProfilePicture userImage={userImage} size={120} />
+                    <ProfilePicture userImage={userObject && userObject.imageID == userImage  ? `${process.env.REACT_APP_IMAGE_URL}${userImage}` : userImage} size={120} />
                   </div>                
                 :
                   <ProfilePicture userImage={userImage} size={120} />

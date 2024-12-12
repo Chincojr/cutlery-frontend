@@ -6,17 +6,39 @@ import ReminderPopUp from './ReminderPopUp';
 
 
 
+/**
+ * TopBar component for rendering the top bar of the website, which includes the navigation links, a button to ask for push notification permission, and a reminder pop-up.
+ * 
+ * The component takes in a userObject prop, which should contain the user's information, and a logged prop, which indicates whether the user is logged in or not. If the user is logged in, the component renders a button to ask for push notification permission and a reminder pop-up. If the user is not logged in, the component renders nothing.
+ * 
+ * The component also verifies the user's push notification permission when mounted and if granted, retrieves the user's notification object. If the user has not granted permission, the component renders a button to ask for permission.
+ * 
+ * @param {Object} userObject - The object containing the user's information.
+ * @param {boolean} logged - Whether the user is logged in or not.
+ * @returns {JSX.Element} The rendered component of the top bar.
+ */
 const TopBar = ({userObject,logged}) => {
 
-    const [cookies, setCookie, removeCookie] = useCookies(allCookies);
+    /**
+     * Retrieves the user's cookies using react-cookie's useCookies hook and stores it in the cookies state.
+     * @type {Object} cookies - The user's cookies
+     */
+    const [cookies] = useCookies(allCookies);
+
+    /**
+     * The user's notification permission state.
+     * @type {boolean} notifyPermission - If the user has granted push notification permission
+     */
     const [notifyPermission, setNotifyPermission] = useState(false);
 
 
     useEffect(() => {
-      async function VerifyNotifications() {
-        /*
-          If the user allows notification and the 
-        */
+      /**
+       * Verifies the user's push notification permission and if granted, retrieves the user's notification object.
+       * 
+       * This function checks the user's push notification permission state and if granted, sets the notifyPermission state to true. If the userObject is defined and does not have a notify property, it calls HandleUserPushNotificationObject to retrieve the user's notification object.
+       */
+      async function VerifyNotifications() {        
         const allowNotifyPermission =  Notification.permission;
         console.log("Notification State",allowNotifyPermission);
         if (allowNotifyPermission === "granted") {    
@@ -43,16 +65,22 @@ const TopBar = ({userObject,logged}) => {
   return (
     <>
       {
-        logged && !cookies.update ?
+        logged && !cookies.update && !cookies.offline ?
           <div className="w-full accent text-white text-center text-[12px] ">Updating</div>
         : <></>
       }
 
       {
-        logged && !notifyPermission ?
+        logged && !notifyPermission && !cookies.offline ?
         <button onClick={askPermission} className={`outline-none primary flex justify-center gap-1 text-white text-[12px]`}>
             To recieve notifications <span className="underline">click here</span>
         </button>      
+        : <></>
+      }
+
+      {
+        cookies.offline ?
+          <div className="w-full accent text-white text-center text-[12px] ">You are Offline</div>
         : <></>
       }
 

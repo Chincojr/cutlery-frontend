@@ -1,5 +1,11 @@
 import { RequestSubscribeNotify } from "./RequestFunction";
 
+/**
+ * Converts a URL-safe base64-encoded string to a Uint8Array.
+ *
+ * @param {string} base64String The URL-safe base64-encoded string.
+ * @return {Uint8Array} The decoded Uint8Array.
+ */
 const urlBase64ToUint8Array = (base64String) => {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding)
@@ -13,6 +19,11 @@ const urlBase64ToUint8Array = (base64String) => {
   return outputArray;
 };
 
+/**
+ * Asks for permission to show web push notifications.
+ *
+ * @return {Promise<void>}
+ */
 export const askPermission = async () => {
   console.log("Inside the Permission");
   
@@ -33,6 +44,13 @@ export const askPermission = async () => {
 };
 
 
+/**
+ * Handles the user's push notification object, by registering the service worker,
+ * subscribing the user to push notifications, and sending the subscription object
+ * to the server to store.
+ *
+ * @return {Promise<void>}
+ */
 export const HandleUserPushNotificationObject = async() => {
   try {    
 

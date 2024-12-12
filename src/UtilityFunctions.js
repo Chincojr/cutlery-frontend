@@ -176,28 +176,29 @@ export function SearchInfoBasedOfType(unfilteredInfo,searchText, type) {
   } else if (type === "UsersList") {
     var filteredInfo = SearchUserList(unfilteredInfo,searchText)
   }else {
+    console.log("Everything Else: ",unfilteredInfo,searchText,type);
+    
     var filteredInfo = unfilteredInfo.filter(obj => {
         switch (type) {
           case "Events":
-            var title = obj.title 
-            var content = obj.content
+            var title = obj.title || ""
+            var content = obj.content || ""
 
-            var stringToSearch 
-            stringToSearch += title ? title : ""
-            stringToSearch += content ? content : ""
-
-            if ( stringToSearch && stringToSearch.toLowerCase().includes(searchText.toLowerCase()) ) {
+            if (               
+              title.toLowerCase().includes(searchText.toLowerCase()) ||
+              content.toLowerCase().includes(searchText.toLowerCase()) 
+            ) {
               return obj;
             }
             break;    
           case "Notify":
-              var title = obj.title 
-              var caption = obj.caption
-    
-              var stringToSearch 
-              stringToSearch += title ? title : ""
-              stringToSearch += caption ? caption : ""
-              if ( stringToSearch && stringToSearch.toLowerCase().includes(searchText.toLowerCase()) ) {
+              var title = obj.title || ""
+              var caption = obj.caption || ""              
+              
+              if ( 
+                title.toLowerCase().includes(searchText.toLowerCase()) ||
+                caption.toLowerCase().includes(searchText.toLowerCase())                 
+              ) {
                 return obj;
               }
               break;  
@@ -418,7 +419,7 @@ export const CheckUserSeen = (obj) => {
         break;
     }
   }
-  console.log("Check User Seen",seen,obj.systemID)
+  // console.log("Check User Seen",seen,obj.systemID)
   return seen  
 }
 

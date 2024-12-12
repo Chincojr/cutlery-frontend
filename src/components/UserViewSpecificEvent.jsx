@@ -10,13 +10,50 @@ import IconSelector from './IconSelector'
 import ProfilePicture from './ProfilePicture'
 import { RequestSeen } from '../RequestFunction'
 
+/**
+ * Displays a specific event for the user.
+ *
+ * This component fetches and displays a specific event based on the userID and userObject.
+ * It utilizes cookies to manage user session data and maintains states for the event details
+ * and dropdown visibility. The component retrieves the event ID from the URL parameters and
+ * fetches the corresponding event details. Additionally, it handles marking the event as seen
+ * if it hasn't been marked already and manages the display of user information for admin users.
+ *
+ * @param {string} userID - The unique identifier for the user.
+ * @param {object} userObject - The object containing user-specific information, including events.
+ * @returns {JSX.Element} The rendered component displaying the specific event.
+ */
 const UserViewSpecificEvent = ({userID, userObject}) => {
 
+  /**
+   * @param {object} cookies - The cookies object from the react-cookie hook.
+   * @param {function} setCookie - The function to set a cookie from the react-cookie hook.
+   * @param {function} removeCookie - The function to remove a cookie from the react-cookie hook.
+   */
   const [cookies, setCookie, removeCookie] = useCookies(allCookies);
+
+  /**
+   * The state of the event.
+   * @type {object}
+   */
   const [event, setEvent] = useState()  
+
+  /**
+   * The state of the dropdown.
+   * @type {boolean}
+   */
   const [dropDown, setDropDown] = useState(false)
+
+  /**
+   * The event ID from the URL parameters.
+   * @type {string}
+   */
   let {eventID} = useParams()
 
+  /**
+   * The month name and day with suffix variables. These variables are only set if the event is not null.
+   * @type {{monthName: string, dayWithSuffix: string}}
+   */
   var monthName,dayWithSuffix
   if (event) {
     let eventDate = dayjs(event.modified)
@@ -29,21 +66,30 @@ const UserViewSpecificEvent = ({userID, userObject}) => {
 
   useEffect(() => {
       
+    /**
+     * Fetches and sets the user's specific event if available.
+     * 
+     * This asynchronous function checks if the userObject is defined,
+     * contains an Event property, and if the Event array has at least
+     * one event. If these conditions are met, it sets the event state with
+     * the user's specific event data. If the event can't be found, it
+     * redirects to the home page.
+     */
       const GetSpecificEvent = async() => {
           if (
               userObject && 
               userObject.Event && 
               userObject.Event.length > 0                
           ) {
-              let specificEvent = userObject.Event.filter(event => event.systemID === eventID )
-              if (specificEvent.length === 1) {
-                  setEvent(specificEvent[0])
+              let specificEvent = userObject.Event.find(event => event.systemID === eventID)
+              if (specificEvent) {
+                  setEvent(specificEvent)
               } else {
                   window.location.href = "/"
               }
           }
-
       }
+
       if (eventID) {
           GetSpecificEvent();
       }
@@ -53,19 +99,25 @@ const UserViewSpecificEvent = ({userID, userObject}) => {
 
   useEffect(() => {   
 
+    /**
+     * Marks the event as seen if it has not been marked already.
+     * 
+     * This asynchronous function checks if the event has been seen by the user.
+     * If the event is not seen, it sends a request to mark the event as seen
+     * using the event's systemID.
+     */
     const HandleUserSeen = async() => {        
-        if (
-            event 
-        ) {    
-          let seen = CheckUserSeen(event)             
-          if (!seen) {            
-            await RequestSeen("Event", event.systemID)
-          }  
-          
-        } 
+        let seen = CheckUserSeen(event)             
+        if (!seen) {            
+          await RequestSeen("Event", event.systemID)                    
+    } 
 
     }
-    HandleUserSeen()
+
+    if (event){
+      HandleUserSeen();
+    }
+    
 
   }, [event,userID])
 

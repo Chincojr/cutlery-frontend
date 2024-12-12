@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: HomePage.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: HomePage.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react'
+import Header from '../components/Header'
+import visitStore from '../assets/visit-store.webp'
+
+/**
+ * The Home Page of the website, contains the hero section, about and services sections
+ * @param {object} userObject - The user object
+ * @param {boolean} logged - Whether the user is logged in or not
+ * @returns {ReactElement} The JSX element of the home page
+ */
+const HomePage = ({userObject,logged}) => {
+  return (
+    &lt;div className='h-screen overflow-hidden flex flex-col '>
+        &lt;Header userObject={userObject} displaySideBar={true} logged={logged} />
+        &lt;div className="grid h-full overflow-auto gap-7 pb-5 ">
+
+          {/* Hero */}
+          &lt;div className="bg-hero bg-cover h-full relative ">
+
+            &lt;div className=" overlayBg inset-0 flex items-center h-full py-[10%]  ">
+
+              &lt;div className=" text-white flex flex-col gap-2 px-5">
+                &lt;div className="text-[20px]">Cutlery Collection&lt;/div>
+                &lt;div className="font-bold text-[28px] bg-[#105B9260] px-3 border-b-[1px] "> Keeping your knives sharp just makes sense. &lt;/div>
+
+                &lt;div className="font-semibold">
+                  &lt;div className="">Knife sharpening is a science, and we are the Professor!&lt;/div>
+                  &lt;div className="">Knife Sharpening is our Passion, Knives are our Game!&lt;/div>
+                  &lt;div className="">The Knife Sharpening Authority!&lt;/div>
+                &lt;/div>
+
+                &lt;div className="">Discover the Joy of a Newly Sharpened Knife!&lt;/div>
+                &lt;button className="outline-none primary px-3 py-2">
+                  Contact Us
+                &lt;/button>
+                &lt;img src={visitStore} alt="" className="w-[150px] h-[150px]" />
+              &lt;/div>
+
+            &lt;/div>
+
+          &lt;/div>
+
+          
+          {/* About */}
+          &lt;div className="px-[10%]">
+
+            &lt;div className=" flex flex-col sm:flex-row justify-center items-center gap-2">
+              &lt;div className=" border-[1px] grow border-black w-full "> &lt;/div>
+              &lt;div className="text-[36px] flex-none font-bold text-center w-fit">ABOUT CUTLERY COLLECTION&lt;/div>
+              &lt;div className=" border-[1px] grow border-black w-full "> &lt;/div>
+              &lt;hr />
+            &lt;/div>
+
+            &lt;div className="text-center">
+              Since 1979 Cutlery Collection has been offering the Dallas-Ft Worth area a “World of Knives” under one roof. Quality knives, cutlery, scissors, and old fashioned service has been our hallmark for decades. As a full service Cutlery shop we offer professional knife, scissor, and razor sharpening. Our experience and knowledge is a valuable resource available to collectors all over the world! For now we will be adding new items to the Gallery as they arrive.
+            &lt;/div>
+
+          &lt;/div>
+
+
+          {/* Our Services */}
+          &lt;div className="px-[10%]">
+
+            &lt;div className=" flex flex-col sm:flex-row justify-center items-center gap-2">
+              &lt;div className=" border-[1px] grow border-black w-full "> &lt;/div>
+              &lt;div className="text-[36px] flex-none font-bold text-center w-fit">OUR SERVICES&lt;/div>
+              &lt;div className=" border-[1px] grow border-black w-full "> &lt;/div>
+              &lt;hr />
+            &lt;/div>
+
+            &lt;div className="grid grid-flow-cols sm:grid-flow-col  text-white gap-2 ">
+
+              &lt;div className="h-[320px] bg-knifeShapen bg-center bg-cover relative ">
+                &lt;a href='https://cutlerycollection.net/knife-sharpening-plano-2/' className="font-bold items-center text-center text-[38.5px] flex justify-center absolute inset-0">
+                  KNIFE &lt;br /> SHARPENING
+                &lt;/a>
+              &lt;/div>
+              &lt;div className="h-[320px] bg-scissor bg-cover bg-center relative ">
+                &lt;a href='https://cutlerycollection.net/scissor-sharpening-plano/' className="font-bold items-center text-center text-[38.5px] flex justify-center absolute inset-0">
+                SCISSOR &lt;br />  SHARPENING
+                &lt;/a>
+              &lt;/div>
+
+            &lt;/div>
+
+          &lt;/div>
+
+        &lt;/div>
+    &lt;/div>
+  )
+}
+
+export default HomePage</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#HomePage">HomePage</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Nov 04 2024 23:16:46 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -5,36 +5,98 @@ import Logo from './Logo';
 import Input from './Input/Input';
 import { checkPasswordStrength, generateRandomString, isValidEmail } from '../UtilityFunctions';
 import { ForgetEmailMessage, ForgetPasswordErrMessage, ForgetPasswordSubmitMessage, allCookies } from '../UtilityObjs';
-import { RequestAdminEmailExist, RequestAdminModifyUserRecord, RequestEmailExist, RequestModifyUserRecord } from '../RequestFunction';
+import { RequestAdminEmailExist, RequestChangeAdminPassword, RequestEmailExist, RequestChangeUserPassword } from '../RequestFunction';
 import IconSelector from './IconSelector';
 import { useCookies } from 'react-cookie';
 
+/**
+ * The ForgetPassword component renders a form for a user to reset their password. It consists of a page with a form to input an email address, a verification code, a new password, and a confirmation of the new password. The form is processed on the client side and if the input is valid, the server is called to modify the user's password. A notification is displayed depending on the success or failure of the password modification. A loading animation is displayed while the server is processing the request.
+ * @function
+ * @param {object} props - The component props.
+ * @param {boolean} props.admin - Whether the user is an admin or not.
+ * @returns {JSX.Element} The rendered component.
+ */
 const ForgetPassword = ({admin}) => {
 
+  /**
+   * Manages cookies for authentication.
+   * @type {Array}
+   */
   const [cookies, setCookie, removeCookie] = useCookies(allCookies);
+
+  /**
+   * State to track loading status.
+   * @type {boolean}
+   */
   const [loading, setLoading] = useState(false);
+
+  /**
+   * State to track notification status and message.
+   * @type {Object}
+   * @property {boolean|null} outcome - Outcome of the notification.
+   * @property {string} message - Message of the notification.
+   */
   const [notify, setNotify] = useState({
     outcome: null,
     message: ""
   });
-  const [emailExist, setEmailExist] = useState(false)
+
+  /**
+   * State to track if email exists.
+   * @type {boolean}
+   */
+  const [emailExist, setEmailExist] = useState(false);
+
+  /**
+   * State to store verification code and its authentication state.
+   * @type {Object}
+   * @property {string} code - Verification code.
+   * @property {boolean} state - Authentication state of the code.
+   */
   const [verifyEmailAuth, setVerifyEmailAuth] = useState({
     code: "",
     state: false,
-  })
+  });
+
+  /**
+   * State to store forget password form data.
+   * @type {Object}
+   * @property {string} email - User's email.
+   * @property {string} password - User's new password.
+   * @property {string} confirmPassword - User's confirm password.
+   */
   const [forget, setForget] = useState({
     email: "",
     password: "",
     confirmPassword: "",
-  })
+  });
 
+  /**
+   * State to store error messages for forget password fields.
+   * @type {Object}
+   * @property {string} email - Error message for the email field.
+   * @property {string} password - Error message for the password field.
+   * @property {string} code - Error message for the verification code field.
+   * @property {string} confirmPassword - Error message for the confirm password field.
+   */
   const [err, setErr] = useState({
     email: "",
     password: "",
     code: "",
     confirmPassword: "",
-  })
+  });
 
+ /**
+  * Validates the input value for a given field name and updates the error state.
+  * 
+  * Checks the validity of the input value based on the field name. If the value
+  * is invalid, it sets the appropriate error message in the error state and returns true.
+  * Otherwise, it clears any existing error message and returns false.
+  * 
+  * @param {string} name - The name of the field to validate.
+  * @param {string} value - The value of the field to validate.
+  * @returns {boolean} - True if the input is invalid, false otherwise.
+  */
   const HandleInvalid =  (name,value) => {
     switch (name) {
         case "email":
@@ -67,6 +129,12 @@ const ForgetPassword = ({admin}) => {
     return false
   }
 
+  /**
+   * Handles the change event of a forget password input field. Updates the forget password
+   * information state with the new value of the input field. Calls the `HandleInvalid` function
+   * to check if the field is invalid and updates the error state accordingly.
+   * @param {object} event - The event object triggered by the input field.
+   */
   const HandleChange = (event) => {
     const { name, value } = event.target; 
     setForget({
@@ -76,6 +144,16 @@ const ForgetPassword = ({admin}) => {
     HandleInvalid(name,value)
   };
 
+  /**
+   * Handles the check email existence process for a user.
+   *
+   * If the email is invalid, it shows an error notification and exits the function.
+   * Generates a random string and saves it as a cookie named "verify" with a max age of 20 minutes.
+   * Calls the `RequestEmailExist` function or `RequestAdminEmailExist` function to check if the email exists in the database.
+   * Updates the `emailExist` state with the result of the check.
+   * Sets a notification of success or failure of the email existence check.
+   * Removes the notification after 3 seconds.
+   */
   const HandleEmailExist = async() => {
 
     if (!forget.email || !isValidEmail(forget.email)) {
@@ -135,6 +213,14 @@ const ForgetPassword = ({admin}) => {
     }, 3000);
   }
 
+  /**
+   * Resets the state of the "Forget Password" form back to its initial state, ready to accept a new email address to send a verification code to.
+   * 
+   * Resets the state of the "Verify Email Auth" form fields to their initial state.
+   * Resets the state of the "Forget" form fields to their initial state.
+   * Resets the state of the error messages to their initial state.
+   * Resets the state of the "Email Exist" flag to false.
+   */
   const HandleArrowBack = () => {
     setVerifyEmailAuth({
         code: "",
@@ -155,6 +241,14 @@ const ForgetPassword = ({admin}) => {
     setEmailExist(false)
   }
 
+  /**
+   * Handles the OTP input change event.
+   *
+   * Updates the `verifyEmailAuth` state with the new OTP value from the input field.
+   * Calls the `HandleInvalid` function to check for input validity and logs the OTP value.
+   *
+   * @param {object} event - The event object triggered by the input field containing `name` and `value`.
+   */
   const HandleOTP = (event) => {
     const { name, value } = event.target; 
     setVerifyEmailAuth({
@@ -167,9 +261,18 @@ const ForgetPassword = ({admin}) => {
     console.log(value);
   }
 
+  /**
+   * Handles the form submission of the "Forget Password" form.
+   *
+   * Checks if the OTP length is equal to 7 numbers, and if not, displays an error message.
+   * Checks if the "verify" cookie exists, and if not, resets the state of the "Forget Password" form and returns.
+   * Checks if the password and confirm password fields are valid, and if not, displays an error message.
+   * Calls the `RequestModifyUserRecord` or `RequestAdminModifyUserRecord` function to modify the user's password with the server.
+   * Handles the response from the server, displaying a success or failure message and removing the "verify" cookie on success.
+   * Sets a notification timeout to clear messages after 3 seconds.
+   */
   const HandleSubmit = async() => {
-
-    console.log("Entered sumbit");
+    
     // check if the verifiedOTP is equal to 7 numbers
     if (verifyEmailAuth.code.length !== 7) {
         setErr({...err, code : ForgetPasswordErrMessage["code"]})
@@ -180,17 +283,16 @@ const ForgetPassword = ({admin}) => {
     if (!cookies.verify) {
         HandleArrowBack()
         return;
-    } else {
-        console.log("second entere");
+    } else {        
         if (HandleInvalid("password",forget.password) || HandleInvalid("confirmPassword",forget.confirmPassword)) {
             return;
         }
 
         setLoading(true);
         if (admin) {
-            var modifyUserRecord = await RequestAdminModifyUserRecord(forget.email,cookies.verify,forget.password,verifyEmailAuth.code)
+            var modifyUserRecord = await RequestChangeAdminPassword(forget.email,cookies.verify,forget.password,verifyEmailAuth.code)
         } else {
-            var modifyUserRecord = await RequestModifyUserRecord(forget.email,cookies.verify,forget.password,verifyEmailAuth.code)
+            var modifyUserRecord = await RequestChangeUserPassword(forget.email,cookies.verify,forget.password,verifyEmailAuth.code)
         }
 
         setLoading(false);
@@ -203,7 +305,10 @@ const ForgetPassword = ({admin}) => {
                     message:ForgetPasswordSubmitMessage[modifyUserRecord.status]
                 })   
                 removeCookie("verify")
-                window.location.href = "login"
+                setInterval(() => {
+                    window.location.href = "login"
+                }, 2000);
+                
                 break;
             case 401:
                 setNotify({

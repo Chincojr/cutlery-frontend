@@ -3,11 +3,26 @@ import IconSelector from './IconSelector'
 import Logo from './Logo'
 import Sidebar from './Sidebar'
 
+/**
+ * MobileSidebar component for rendering a mobile-friendly sidebar with toggling functionality.
+ * 
+ * This component displays a button to toggle the visibility of the sidebar. When the button is clicked,
+ * the sidebar slides in and out of view, providing a smooth animation effect. The component uses state
+ * hooks to manage the visibility of the navigation bar and whether the sidebar is open or closed. The
+ * sidebar includes a logo and links rendered by the Sidebar component.
+ * 
+ * @param {boolean} display - Controls whether the sidebar is visible or hidden on larger screens.
+ * @returns {JSX.Element} The rendered mobile sidebar component.
+ */
 const MobileSidebar = ({display}) => {
 
   const [navBar, setNavBar] = useState(false)
   const [open, setOpen] = useState(false)
 
+  /**
+   * Toggles the navigation bar's visibility state.
+   * Sets the `navBar` state to its opposite value and ensures the sidebar is open by setting `open` to true.
+   */
   const HandleNavBar = () => {
     setNavBar(!navBar)
     setOpen(true)

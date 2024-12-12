@@ -6,28 +6,139 @@ import { useCookies } from 'react-cookie'
 import { allCookies } from '../../UtilityObjs'
 import { WSClose, WSConnect } from '../../WebSocket'
 
-const UserContactPage = ({userObject, userID,logged,setRefreshCount}) => {
+/**
+ * Renders the User Contact Page.
+ *
+ * This component manages the user's contact interactions, allowing them to view
+ * and send messages. It utilizes websocket connections to update the connectivity
+ * state and manage online user status. The component also maintains states for
+ * selected chat, cookies, pending messages, and online users.
+ *
+ * @param {Object} userObject - The object containing user-specific information.
+ * @param {string} userID - The unique identifier for the user.
+ * @param {boolean} logged - Indicates if the user is logged in. 
+ * @returns {JSX.Element} The rendered User Contact Page component.
+ */
+const UserContactPage = ({
+    userObject, 
+    userID,
+    logged,
+    setUserObject
+  }) => {
 
-  console.log("This is user Object admin", userObject);
-  const [selectedChat, setSelectedChat] = useState();
-  const [cookies, setCookie, removeCookie] = useCookies(allCookies);
-  const [pendingMessages, setPendingMessages] = useState({})
-  const [connectivityState, setConnectivityState] = useState(false)
-  const [onlineUsers, setOnlineUsers] = useState([])
+  
+  /**
+   * State to store the selected chat
+   * @type {Object}
+   */
+  const [selectedChat, setSelectedChat] = useState({});
+
+  /**
+   * State to store the user's cookies
+   * @type {Object}
+   */
+  const [cookies] = useCookies(allCookies);
+
+  /**
+   * State to store the pending messages
+   * @type {Object}
+   */
+  const [pendingMessages, setPendingMessages] = useState({});
+
+  /**
+   * State to store the connectivity state of the websocket
+   * @type {boolean}
+   */
+  const [connectivityState, setConnectivityState] = useState(false);
+
+  /**
+   * State to store the online users
+   * @type {Array}
+   */
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
 
   useEffect(() => {
-    if (
-      userObject &&
-      userObject.Admin
-    ) {
-        setSelectedChat(userObject.Admin)
+    /**
+     * Sets the selected chat based on the user object
+     * @param {Object} userObject - The user object
+     */
+    if (userObject && userObject.Admin) {
+      setSelectedChat(userObject.Admin);
     }
   }, [userObject])
+
+  const HandleRemovePending = (chatID,messageID) => {
+    if (!chatID || !messageID) {
+        return
+    }
+    var prevPendingMessages 
+
+    setPendingMessages(lastPendingMessages => {
+        prevPendingMessages = lastPendingMessages
+        return lastPendingMessages
+    })
+
+    if (prevPendingMessages && prevPendingMessages[chatID]) {
+        prevPendingMessages[chatID] = prevPendingMessages[chatID].filter(message => message.messageID !== messageID)
+        setPendingMessages(prevPendingMessages)
+    }
+
+  }
+
+  const HandleUpdateChat = (updatedChat) => {
+    
+    var prevUserObject 
+    var prevSelectedChat
+
+    setUserObject(lastUserObject => {
+        prevUserObject = lastUserObject
+        return lastUserObject
+    })
+
+    setSelectedChat(lastSelectedChat => {
+        prevSelectedChat = lastSelectedChat
+        return lastSelectedChat
+    })
+                 
+      console.log("Updated User Object");
+      
+      if(cookies.type === "Admin") {  
+        console.log("WebSocket Cookies: ", cookies.type);              
+        prevUserObject.UsersInformation[updatedChat.clientID] = JSON.parse(updatedChat.chat) || null
+      } else {      
+        console.log("WebSocket Cookies: ", cookies.type);  
+        prevUserObject.Admin = JSON.parse(updatedChat.chat) || null;        
+      }
+      setUserObject(prevUserObject)           
+          
+
+    setSelectedChat(prevChat => ({
+        ...prevChat,
+        messages: JSON.parse(updatedChat.chat) || null
+    }))    
+
+  }
   
+  /**
+   * Connects to the websocket and sets the connectivity state
+   * When the component is unmounted, it removes the event listener
+   */
   useEffect(() => {
-    WSConnect(cookies,setConnectivityState,setRefreshCount,setPendingMessages,setOnlineUsers)    
+    /**
+     * Connects to the websocket and sets the connectivity state
+     * @param {Object} cookies - The user's cookies
+     * @param {Function} setConnectivityState - The function to set the connectivity state
+    
+     * @param {Function} setPendingMessages - The function to set the pending messages
+     * @param {Function} setOnlineUsers - The function to set the online users
+     */
+    WSConnect(cookies,setConnectivityState,HandleRemovePending,HandleUpdateChat,setOnlineUsers)    
     return () => {
+      /**
+       * Removes the event listener when the component is unmounted
+       * @param {Function} WSClose - The function to close the websocket
+       */
       window.removeEventListener('beforeunload', WSClose);
     };
   }, []); 

@@ -1,6 +1,33 @@
 import React from 'react'
 import IconSelector from './IconSelector';
-import { UnavailableMessage } from '../UtilityObjs';
+
+const UnavailableMessage = {
+  Reminders: {
+    iconType: "NoReminders",
+    text: "No reminders"
+  },
+  Events: {
+    iconType: "Event",
+    text: "No events"
+  },
+  Notify: {
+    iconType: "NoNotify",
+    text: "No Notification"
+  },
+  Msg: {
+    iconType: "NoMsg",
+    text: "No message"
+  },
+  SelectMsg: {
+    iconType: "Msgs",
+    text: "Select Chat"
+  },
+  Offline: {
+    iconType: "Offline",
+    text: "You are Offline"
+  }
+}
+
 
 
 const Unavailable = ({type}) => {

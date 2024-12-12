@@ -1,7 +1,32 @@
 import React from 'react'
 import IconSelector from '../IconSelector'
 
-const Input = ({inputName,labelText,error,value,handleChange,placeholder,type,iconType,prePlaceholder,readonly,handleClick,viewOnly}) => {
+/**
+ * A form input component, with a label and an input field.
+ * Also displays an error message if the error prop is set.
+ * The input field has a placeholder and an icon.
+ *
+ * @param {string} inputName - The name of the input field.
+ * @param {string} labelText - The text to display next to the input field.
+ * @param {string} error - The error message to display.
+ * @param {string} value - The value of the input field.
+ * @param {function} handleChange - The function to call when the input field changes.
+ * @param {string} placeholder - The placeholder text to display in the input field.
+ * @param {string} type - The type of the input field.
+ * @param {string} iconType - The type of icon to display.
+ * @param {string} prePlaceholder - The text to display before the placeholder.
+ */
+const Input = ({
+        inputName,
+        labelText,
+        error,
+        value,
+        handleChange,
+        placeholder,
+        type,
+        iconType,
+        prePlaceholder
+    }) => {
 
     const theChange = () => {
 
@@ -18,17 +43,7 @@ const Input = ({inputName,labelText,error,value,handleChange,placeholder,type,ic
                     </label>
                 </div>
                 <div className="pl-1">{prePlaceholder}</div>
-                {
-                    readonly ? (
-                        <textarea value={value} onChange={theChange} onClick={handleClick} type={type}  name={inputName} id={inputName} className="w-full pl-1 bg-transparent outline-none" rows={"1"} readOnly placeholder={placeholder} ></textarea> 
-
-                    ) : viewOnly ? (
-                        <input value={value} className='pl-1 w-full focus: invalid: bg-transparent outline-none' id={inputName} name={inputName} type={"text"} />
-                    ) :                        
-                    (
-                        <input value={value} onChange={handleChange} className='w-full pl-1 focus: invalid: bg-transparent outline-none' id={inputName} name={inputName} type={type} placeholder={placeholder}  />
-                    )
-                }
+                <input value={value} onChange={handleChange} className='w-full pl-1 focus: invalid: bg-transparent outline-none' id={inputName} name={inputName} type={type} placeholder={placeholder}  />
             </div>
             <div className="text-[12px] accentText">{error}</div>
         </div>   

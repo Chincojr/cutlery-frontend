@@ -13,7 +13,8 @@ export const allCookies = [
   "uid",
   "type",
   "reminder",
-  "update"
+  "update",
+  "offline"
 ]
 
 export const VerifyCodeMessage = {
@@ -175,28 +176,6 @@ export const EditRemindersMessage = {
   failure : "Server Error"
 }
 
-export const UnavailableMessage = {
-  Reminders: {
-    iconType: "NoReminders",
-    text: "No reminders"
-  },
-  Events: {
-    iconType: "Event",
-    text: "No events"
-  },
-  Notify: {
-    iconType: "NoNotify",
-    text: "No Notification"
-  },
-  Msg: {
-    iconType: "NoMsg",
-    text: "No message"
-  },
-  SelectMsg: {
-    iconType: "Msgs",
-    text: "Select Chat"
-  }
-}
 
 export const DeleteInfoMessage = {
   success : "Deleted",

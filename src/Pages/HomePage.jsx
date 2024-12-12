@@ -2,6 +2,12 @@ import React from 'react'
 import Header from '../components/Header'
 import visitStore from '../assets/visit-store.webp'
 
+/**
+ * The Home Page of the website, contains the hero section, about and services sections
+ * @param {object} userObject - The user object
+ * @param {boolean} logged - Whether the user is logged in or not
+ * @returns {ReactElement} The JSX element of the home page
+ */
 const HomePage = ({userObject,logged}) => {
   return (
     <div className='h-screen overflow-hidden flex flex-col '>

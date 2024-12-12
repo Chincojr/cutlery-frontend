@@ -5,9 +5,29 @@ import Uploader from '../Uploader'
 
 
 
-const InputImage = ({name,setInfo,info,error,handleInvalid}) => {
+/**
+ * A component for displaying and managing an image input field.
+ * Allows the user to upload or clear an image, and displays an error message if needed.
+ *
+ * @param {string} name - The name of the image input field.
+ * @param {function} setInfo - The function to update the image information state.
+ * @param {object} info - The current image information state.
+ * @param {string} error - The error message to display, if any.
+ * @param {function} handleInvalid - Optional function to handle invalid image input.
+ */
+const InputImage = ({
+    name,
+    setInfo,
+    info,
+    error,
+    handleInvalid
+  }) => {
 
-
+  /**
+   * Clears the image for the given input field name.
+   * Updates the image information state by setting the value to an empty string.
+   * @param {string} name - The name of the input field.
+   */
   const HandleClearImage = (name) => {
       setInfo({
           ...info,
@@ -15,6 +35,13 @@ const InputImage = ({name,setInfo,info,error,handleInvalid}) => {
       })
   } 
 
+
+  /**
+   * Adds an image to the given input field name.
+   * Updates the image information state by setting the value to the given image.
+   * If a handleInvalid function is provided, calls it with the input field name and the given image.
+   * @param {string} value - The image to add.
+   */
   const HandleAddImage = (value) => {
     setInfo({
       ...info,

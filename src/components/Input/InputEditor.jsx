@@ -3,7 +3,19 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the CSS for the Snow theme
 
 
-const InputEditor = ({value, onChange,error}) => {
+/**
+ * A rich text editor component using ReactQuill.
+ *
+ * @param {Object} props - The props for the component.
+ * @param {string} props.value - The current content of the editor.
+ * @param {function} props.onChange - The function to call when the content changes.
+ * @param {string} [props.error] - An optional error message to display below the editor.
+ */
+const InputEditor = ({
+    value, 
+    onChange,
+    error
+  }) => {
       
     const modules = {
       toolbar: [

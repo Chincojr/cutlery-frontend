@@ -25,15 +25,22 @@ import { PiArrowClockwiseFill } from "react-icons/pi";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { IoIosCheckmark } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
+import { MdMobiledataOff } from "react-icons/md";
 
 
 
-
-const IconSelector = ({type,size,className,color}) => {
-
-  if (!size) {
-    size = 30
-  }
+/**
+ * A component that renders an icon based on the type parameter.
+ * The rendered icon has its size set to the size parameter, its class name set to the className parameter, and its color set to the color parameter.
+ * The available icon types are: Bars, User, Home, Notify, Arrow, Plus, Camera, Edit, Repeat, Search, Delete, Reminder, CreateNotify, CreateEvent, Login, NoReminders, Event, NoNotify, Msgs, NoMsg, Reply, Send, Pending, Copy, Check, and DropArrow.
+ * If the type parameter is not recognized, an empty fragment is returned.
+ * @param {string} type - The type of the icon to render.
+ * @param {number} [size=30] - The size of the icon.
+ * @param {string} [className=""] - The class name of the icon.
+ * @param {string} [color=""] - The color of the icon.
+ * @returns A JSX element representing the icon.
+ */
+const IconSelector = ({type,size = 30,className,color}) => {
 
   switch (type) {
     case "Bars":
@@ -140,6 +147,10 @@ const IconSelector = ({type,size,className,color}) => {
       return (
         <IoIosArrowForward  size={size} color={color} className={className} />
       )
+    case "Offline":
+      return (
+        <MdMobiledataOff  size={size} color={color} className={className} />
+      )      
     default:
       return (
         <></>

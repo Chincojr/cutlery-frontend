@@ -4,6 +4,7 @@ import AdminViewEvents from '../../components/AdminViewEvents'
 import PageContainer from '../PageContainer'
 
 const AdminViewEventsPage = ({userObject,logged}) => {
+  console.log("Events User Object: ", userObject);
   return (
     <PageContainer userObject={userObject} logged={logged}>
         <div className="flex flex-col overflow-hidden p-2">

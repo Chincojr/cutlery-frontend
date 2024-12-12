@@ -2,13 +2,31 @@ import React, { useState } from 'react'
 import InputSelect from './Input/InputSelect'
 import { SortInfoBasedOfKey } from '../UtilityFunctions';
 
+/**
+ * A component that renders a dropdown menu for sorting and an input field for setting the order of the sort.
+ * It also contains a button that triggers the sorting of the given info based on the current sorting options.
+ * @param {Object} info - The info that needs to be sorted.
+ * @param {Function} setInfo - The function that sets the sorted info.
+ * @param {Array<string>} sortFunctions - An array of functions used to sort the info.
+ * @returns {React.ReactElement} A React element that contains a dropdown menu and an input field for sorting, and a button that triggers the sorting.
+ */
 const Sort = ({info,setInfo, sortFunctions}) => {
 
+  /**
+   * State that holds the sort information.
+   * @type {{order: string, sortBy: string}}
+   * @property {string} order - The order of the sort. Can be either "Ascending" or "Descending".
+   * @property {string} sortBy - The key to sort by. Can be any key that is available in the objects in the info array.
+   */
   const [sortInfo, setSortInfo ] = useState({
       order: "Ascending",
       sortBy: "Title",
-  })
+  });
 
+  /**
+   * Handles a change in the sort options by updating the sortInfo state.
+   * @param {React.ChangeEvent<HTMLSelectElement>} event - The change event.
+   */
   const HandleChange = (event) => {
     const { name, value } = event.target; 
     setSortInfo({
@@ -17,6 +35,10 @@ const Sort = ({info,setInfo, sortFunctions}) => {
     });  
   };
 
+  /**
+   * Sorts the given info based on the current sorting options and saves the sorted info in the state.
+   * @function
+   */
   const  HandleSort =async () => {
     let sortedInfo = await SortInfoBasedOfKey(sortInfo.order,sortInfo.sortBy,info)
     console.log("This is the sorted info: ",sortInfo, sortedInfo);

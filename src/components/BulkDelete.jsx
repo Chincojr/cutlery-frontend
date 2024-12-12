@@ -1,37 +1,94 @@
 import React, { useState } from 'react'
 import IconSelector from './IconSelector'
 import Loading from './Loading'
-import { useCookies } from 'react-cookie';
-import { DeleteInfoMessage, allCookies } from '../UtilityObjs';
+import { DeleteInfoMessage } from '../UtilityObjs';
 import { RequestDeleteInfo } from '../RequestFunction';
 import Notify from './Notify';
 
+/**
+ * Component to handle bulk deletion of information.
+ * 
+ * @param {Array} bulkDelete - Array of system IDs of information to be deleted.
+ * @param {Array} info - Array of information objects from which to select the information to be deleted.
+ * @param {string} type - Type of information to be deleted (e.g. "Events", "Notifications", etc.).
+ * 
+ * This component renders a button with a trash can icon. When clicked, it displays a confirmation dialog with a list of the selected information.
+ * If the user confirms, it sends a request to the backend to delete the selected information, and updates the notification state to reflect the outcome of the request.
+ * If the request is successful, it will reload the page.
+ * If the request fails, it will display a failure notification.
+ * It also sets a timeout to clear the notification after 2 seconds.
+ */
 const BulkDelete = ({ bulkDelete, info, type}) => {
   
-  const [cookies, setCookie, removeCookie] = useCookies(allCookies);
+  /**
+   * Array to store selected information for bulk deletion.
+   * @type {Array}
+   */
   let selectInfo = []
+
+  /**
+   * State to manage notification outcome and message.
+   * @type {{outcome: null|string, message: string}}
+   */
   const [notify, setNotify] = useState({
     outcome: null,
     message: ""
   })
+
+  /**
+   * State to control overlay visibility.
+   * @type {boolean}
+   */
   const [overlay, setOverlay] = useState(false)
+
+  /**
+   * State to control loading spinner visibility.
+   * @type {boolean}
+   */
   const [loading, setLoading] = useState(false)
+
+
+  /**
+   * Selects the information for bulk deletion based on the bulkDelete prop.
+   * If bulkDelete is an array with a single element of "all", it sets the
+   * selectInfo to the entire info array. Otherwise, it filters the info array
+   * to only include the items with the corresponding system IDs from the bulkDelete array.
+   * @type {Array}
+   */
   if (bulkDelete && bulkDelete.length == 1 && bulkDelete[0] === "all") {
     selectInfo = info
   }
 
+  /**
+   * Selects the information for bulk deletion based on the bulkDelete prop.
+   * If bulkDelete is an array with multiple elements, it filters the info array
+   * to only include the items with the corresponding system IDs from the bulkDelete array.
+   * @type {Array}
+   */
   if (bulkDelete && bulkDelete.length > 0 && !bulkDelete.includes("all")) {
     selectInfo = info.filter((val) => bulkDelete.includes(val.systemID))
   }
 
+  /**
+   * Sets the overlay state to true, displaying the confirmation dialog.
+   */
   const HandleConfirm = () => {
     setOverlay(true)
   }
 
+  /**
+   * Handles the deletion of the selected information.
+   * 
+   * Sends a request to the backend to delete the selected information, and
+   * updates the notification state to reflect the outcome of the request.
+   * If the request is successful, it will reload the page.
+   * If the request fails, it will display a failure notification.
+   * It also sets a timeout to clear the notification after 2 seconds.
+   */
   const HandleDelete = async() => {
     let infoSystemIds = []
     selectInfo.forEach(info => {
-      infoSystemIds.push(`'${info.systemID}'`)
+      infoSystemIds.push(`${info.systemID}`)
     });
     console.log("Delete: ",{ type,infoSystemIds});
 
@@ -64,6 +121,10 @@ const BulkDelete = ({ bulkDelete, info, type}) => {
     
   }
 
+  /**
+   * Handles canceling the bulk deletion process.
+   * When called, it will set the overlay state to false, effectively closing the confirmation overlay.
+   */
   const HandleCancel = () => {
     setOverlay(false)
   }

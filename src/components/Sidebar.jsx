@@ -3,6 +3,14 @@ import IconSelector from './IconSelector'
 import { allCookies } from '../UtilityObjs'
 import { useCookies } from 'react-cookie'
 
+/**
+ * An array of objects containing the name, url and icon of the sidebar
+ * links for users.
+ * @typedef {Object} userSideBarFormat
+ * @property {string} name - The name of the link
+ * @property {string} url - The url of the link
+ * @property {string} icon - The icon of the link
+ */
 const userSideBarFormat = [
 
   {
@@ -20,9 +28,16 @@ const userSideBarFormat = [
     url : "/contact",
     icon : "Msgs",
   },
+];
 
-]
-
+/**
+ * An array of objects containing the name, url and icon of the sidebar
+ * links for admins.
+ * @typedef {Object} adminSideBarFormat
+ * @property {string} name - The name of the link
+ * @property {string} url - The url of the link
+ * @property {string} icon - The icon of the link
+ */
 const adminSideBarFormat = [
   {
     name : "Home",
@@ -49,10 +64,18 @@ const adminSideBarFormat = [
     url : "/admin/view/msg",
     icon : "Msgs",
   },
-]
+];
 
+/**
+ * A functional component that renders the sidebar of the website.
+ * 
+ * The component renders a sidebar that is either for admins or users based on the
+ * type of the user in the cookie. The sidebar contains links to the home page, 
+ * events page, admin notification page, admin events page and contact page.
+ * @returns {JSX.Element} The rendered JSX element of the sidebar.
+ */
 const Sidebar = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(allCookies);
+  const [cookies] = useCookies(allCookies);
 
   return (
     <div className='flex flex-col sm:border-r-[2px] px-[10%] py-3 w-full ' >

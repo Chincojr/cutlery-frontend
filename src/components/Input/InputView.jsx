@@ -1,7 +1,22 @@
 import React from 'react'
 import IconSelector from '../IconSelector'
 
-const InputView = ({labelText,prePlaceholder,iconType,value,inputName}) => {
+/**
+ * A component that displays a labeled icon with a value.
+ * 
+ * @param {string} labelText - The label text to display next to the icon.
+ * @param {string} prePlaceholder - Text to display before the value.
+ * @param {string} iconType - The type of icon to display.
+ * @param {string} value - The value to display next to the icon.
+ * @param {string} inputName - The name attribute for the displayed elements.
+ */
+const InputView = ({
+        labelText,
+        prePlaceholder,
+        iconType,
+        value,
+        inputName
+    }) => {
   return (
     <div>
         <div className="">

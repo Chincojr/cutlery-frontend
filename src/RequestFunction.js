@@ -61,9 +61,9 @@ export const RequestAddReminderInformation = async(repeatValue,repeatType) => {
 export const RequestUserInfo = async () => {
   try {
     let response = await axios.post(`${process.env.REACT_APP_API_URL}/user-info`)
-    return {status:response.status, data:response.data}
+    return response.data
   } catch (error) {
-    return {status: error.response ? error.response.status : 500 };
+    return false;
   }
 }
 
@@ -92,13 +92,8 @@ export const RequestRegisterUser = async (verifyId,code,obj) => {
 
 export const RequestCheckEmailUniqueness = async (email) => {
   try {
-    let response = await axios.post(`${process.env.REACT_APP_API_URL}/verify-email`, JSON.stringify({email}))
-
-    if (response.status === 200) {
-      return true
-    }
-    
-    return false;
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/verify-email`, JSON.stringify({email}))      
+    return true;
   } catch (error) {
     return false;
   }
@@ -144,16 +139,6 @@ export const RequestCreateReminder = async (obj) => {
     
       return false;
   } catch (error) {
-    return false;
-  }
-}
-
-export const RequestLogged = async() => {
-  try {
-    let response = await axios.get(`${process.env.REACT_APP_API_URL}/logged`)    
-    return true        
-  } catch (error) {
-    console.log("Request Logged: ",error);    
     return false;
   }
 }
@@ -226,9 +211,9 @@ export const RequestEmailExist = async (email,verifyId) => {
   }
 }
 
-export const RequestModifyUserRecord = async (email,verifyId,password,code) => {
+export const RequestChangeUserPassword = async (email,verifyId,password,code) => {
   try {
-    let response = await axios.put(`${process.env.REACT_APP_API_URL}/forget-password`, JSON.stringify({email,verifyId,password,code}))
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/change-password`, JSON.stringify({email,verifyId,password,code}))
     
     return {status:response.status, data:response.data} ;
   } catch (error) {
@@ -247,9 +232,9 @@ export const RequestAdminEmailExist = async (email,verifyId) => {
   }
 }
 
-export const RequestAdminModifyUserRecord = async (email,verifyId,password,code) => {
+export const RequestChangeAdminPassword = async (email,verifyId,password,code) => {
   try {
-    let response = await axios.put(`${process.env.REACT_APP_API_URL}/admin-forget-password`, JSON.stringify({email,verifyId,password,code}))
+    let response = await axios.post(`${process.env.REACT_APP_API_URL}/admin-change-password`, JSON.stringify({email,verifyId,password,code}))
     
     return {status:response.status, data:response.data} ;
   } catch (error) {

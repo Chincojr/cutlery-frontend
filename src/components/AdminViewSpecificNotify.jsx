@@ -9,25 +9,78 @@ import { allCookies } from '../UtilityObjs'
 import IconSelector from './IconSelector'
 import ProfilePicture from './ProfilePicture'
 
+/**
+ * AdminViewSpecificNotify component for viewing and managing a specific notification.
+ * 
+ * This component renders a page for viewing and managing a specific notification.
+ * It retrieves the notification ID from the URL parameters and fetches the
+ * corresponding notification data from the userObject. It also renders a dropdown
+ * component for viewing the users who have seen the notification.
+ * 
+ * The component takes in a userObject prop, which should contain the user's
+ * notification data. It uses this data to populate the page and other UI
+ * components.
+ * 
+ * @param {object} userObject - The object containing the user's notification data.
+ * @returns {JSX.Element} The rendered component displaying the specific notification page and controls.
+ */
 const AdminViewSpecificNotify = ({userID, userObject}) => {
 
-  const [cookies, setCookie, removeCookie] = useCookies(allCookies);
-  const [notify, setNotify] = useState()
-  const [dropDown, setDropDown] = useState(false)
-  let {notifyID} = useParams()
+  /**
+   * Custom hook to manage cookies, notification state, and dropdown toggle.
+   */
+  const [cookies] = useCookies(allCookies);
 
-  var monthName,dayWithSuffix
+  /**
+   * State to store notification data.
+   * @type {Object|undefined}
+   */
+  const [notify, setNotify] = useState();
+
+  /**
+   * State to toggle dropdown visibility.
+   * @type {boolean}
+   */
+  const [dropDown, setDropDown] = useState(false);
+
+  /**
+   * Retrieve notification ID from URL parameters.
+   * @type {string}
+   */
+  let { notifyID } = useParams();
+
+  /**
+   * Variables to store formatted month name and day with suffix.
+   * @type {string|undefined}
+   */
+  var monthName, dayWithSuffix;
   if (notify) {
-    let notifyDate = dayjs(notify.modified)
-    var { monthName,dayWithSuffix } = getMonthNameWithSuffix(notifyDate.$M,notifyDate.$D)
+    let notifyDate = dayjs(notify.modified);
+    var { monthName, dayWithSuffix } = getMonthNameWithSuffix(notifyDate.$M, notifyDate.$D);
   }
 
+  /**
+   * Toggles the dropdown visibility state.
+   * 
+   * This function toggles the state used to control the visibility of the
+   * dropdown component. It is called when the user clicks on the dropdown
+   * toggle button.
+   */
   const HandleDropDown = () => {
     setDropDown(!dropDown)
   }
 
   useEffect(() => {
       
+    /**
+     * Fetches and sets the user's specific notification if available.
+     * 
+     * This asynchronous function checks if the userObject is defined,
+     * contains a Notify property, and if the Notify array has at least
+     * one notification. If these conditions are met, it sets the notifyInfo
+     * state with the user's specific notification data. If the notification
+     * can't be found, it redirects to the home page.
+     */
       const GetSpecificNotify = async() => {
           if (
               userObject && 
@@ -42,18 +95,12 @@ const AdminViewSpecificNotify = ({userID, userObject}) => {
 
               }
           }
-
       }
       if (notifyID) {
           GetSpecificNotify();
       }
 
-  }, [userObject])
-
-
-  
-
-  console.log(monthName,dayWithSuffix,userObject);
+  }, [userObject])  
   
 
   return (

@@ -6,6 +6,16 @@ import Notifications from './Notifications'
 import TopBar from './TopBar'
 
 
+/**
+ * The Header component, displays the top bar, logo, and navigation links.
+ * 
+ * The component takes in three props: `displaySideBar`, `userObject`, and `logged`. `displaySideBar` determines whether the sidebar is displayed. `userObject` is the user object containing the user's information. `logged` determines whether the user is logged in or not.
+ * If the user is logged in, the component renders the TopBar, the logo, and the navigation links. If the user is not logged in, the component renders the logo and a login link.
+ * @param {boolean} displaySideBar - Whether to display the sidebar
+ * @param {object} userObject - The object containing the user's information
+ * @param {boolean} logged - Whether the user is logged in or not
+ * @returns {ReactElement} The JSX element of the header
+ */
 const Header = ({displaySideBar, userObject,logged}) => {
 
   return (

@@ -8,13 +8,41 @@ import { WSSend } from '../../WebSocket';
 
 
 
-const InputMessage = ({selectReply, handleClearSelectReply, userID, to, chatType,isAdmin, setPendingMessages,userObject}) => {
+const InputMessage = ({
+        selectReply, 
+        handleClearSelectReply, 
+        userID, 
+        to, 
+        chatType,
+        isAdmin, 
+        setPendingMessages,
+        userObject
+    }) => {
 
-    // console.log("Select Reply", selectReply, userID);
-    const [message, setMessage] = useState("")
-    const [selectImages, setSelectImages] = useState([])
-    const [disable, setDisable] = useState(false)
-    let textAreaRef = useRef()
+    
+    /**
+     * State to hold the message input by the user.
+     * @type {string}
+     */
+    const [message, setMessage] = useState("");
+
+    /**
+     * State to hold the selected images.
+     * @type {Array<Object>}
+     */
+    const [selectImages, setSelectImages] = useState([]);
+
+    /**
+     * State to control the disabled state of the textarea.
+     * @type {boolean}
+     */
+    const [disable, setDisable] = useState(false);
+
+    /**
+     * Reference to the textarea element.
+     * @type {React.RefObject<HTMLTextAreaElement>}
+     */
+    let textAreaRef = useRef();
 
 
     const HandleMessage = (event) => {
@@ -92,13 +120,13 @@ const InputMessage = ({selectReply, handleClearSelectReply, userID, to, chatType
             //create message object
             const messageID = generateRandomString();
             const messageObject = {
-                    type: chatType,
+                    action: chatType,
                     message: {
                         recipient: to,
                         from: userID,
                         images: selectImages,
                         text: message,
-                        replyTo: selectReply.messageID,
+                        replyTo: selectReply.messageID || null,
                         seen: null,
                         messageID,
                     },
@@ -108,11 +136,21 @@ const InputMessage = ({selectReply, handleClearSelectReply, userID, to, chatType
             }            
 
 
-            // replace the pending messages with that of localstorage
-            setPendingMessages((prevPendingMessages) => ({
-                ...prevPendingMessages,
-                [messageID]: messageObject
-            }));            
+        
+            setPendingMessages((prevPendingMessages) => {
+                let prevChatMessages = prevPendingMessages && prevPendingMessages[to] ? prevPendingMessages[to] : []                
+                return {
+                    ...prevPendingMessages,
+                    [to]: [
+                        ...prevChatMessages,
+                        {
+                            ...messageObject.message,
+                            state: "pending",                            
+                        }
+                    ]                    
+                }
+
+            });     
             console.log("Pending Message Input: ",messageObject);
 
             // send message tp backend

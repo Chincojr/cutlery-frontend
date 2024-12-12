@@ -13,33 +13,89 @@ import { RequestCheckEmailUniqueness, RequestForVerificationCode, RequestRegiste
 
 const Register = () => {
 
-  const [loading, setLoading] = useState(false)
+  /**
+   * Loading state to indicate if an operation is in progress.
+   * @type {boolean}
+   */
+  const [loading, setLoading] = useState(false);
+
+  /**
+   * Hook for managing cookies.
+   * @type {Array}
+   */
   const [cookies, setCookie, removeCookie] = useCookies(allCookies);
+
+  /**
+   * State for verification code and its disabled status.
+   * @type {Object}
+   * @property {boolean} disabled - Indicates if verification is disabled.
+   * @property {string} code - Verification code.
+   */
   const [verify, setVerify] = useState({
-    disabled : false,
-    code : ""
-  })
-  const [signUpFormComplete, setSignUpFormComplete] = useState(false)
+    disabled: false,
+    code: ""
+  });
+
+  /**
+   * State to track if the sign-up form is complete.
+   * @type {boolean}
+   */
+  const [signUpFormComplete, setSignUpFormComplete] = useState(false);
+
+  /**
+   * State to store user registration information.
+   * @type {Object}
+   * @property {string} name - User's name.
+   * @property {string} email - User's email.
+   * @property {string} password - User's password.
+   * @property {string} phoneNumber - User's phone number.
+   */
   const [registerInfo, setRegisterInfo] = useState({
     name: "",
     email: "",
     password: "",
-    phoneNumber:"",
-  })
+    phoneNumber: ""
+  });
 
+  /**
+   * State to store error messages for registration fields.
+   * @type {Object}
+   * @property {string} name - Error message for name.
+   * @property {string} email - Error message for email.
+   * @property {string} password - Error message for password.
+   * @property {string} phoneNumber - Error message for phone number.
+   * @property {string} code - Error message for verification code.
+   */
   const [err, setErr] = useState({
     name: "",
     email: "",
     password: "",
-    phoneNumber:"",
-    code : "",
-  })
+    phoneNumber: "",
+    code: ""
+  });
 
+  /**
+   * State for notification messages.
+   * @type {Object}
+   * @property {boolean|null} outcome - Outcome of the notification.
+   * @property {string} message - Notification message.
+   */
   const [notify, setNotify] = useState({
     outcome: null,
     message: ""
-  })
+  });
 
+/**
+ * Validates the input value for a given field name and updates the error state.
+ * 
+ * Checks the validity of the input value based on the field name. If the value
+ * is invalid, it sets the appropriate error message in the error state and returns true.
+ * Otherwise, it clears any existing error message and returns false.
+ * 
+ * @param {string} name - The name of the field to validate.
+ * @param {string} value - The value of the field to validate.
+ * @returns {boolean} - True if the input is invalid, false otherwise.
+ */
   const HandleInvalid =  (name,value) => {
 
     switch (name) {
@@ -80,42 +136,68 @@ const Register = () => {
 }
 
 
-  const HandleChange = (event) => {
-    const { name, value } = event.target; 
-    setRegisterInfo({
-        ...registerInfo,
-        [name]: value,
-    });  
-    HandleInvalid(name,value)
-  };
+    /**
+     * Handles the change event of an input field. Updates the register information
+     * state with the new value of the input field. Calls the `HandleInvalid` function
+     * to check if the field is invalid and updates the error state accordingly.
+     * @param {object} event - The event object triggered by the input field.
+     */
+    const HandleChange = (event) => {
+        const { name, value } = event.target; 
+        setRegisterInfo({
+            ...registerInfo,
+            [name]: value,
+        });  
+        HandleInvalid(name,value)
+    };
 
-  const HandleUserSignUpForm =  async() => {
-    try {
-        // check if the inputs ar valid
-        for (let key in registerInfo) {
-            let isInputInvalid = HandleInvalid(key,registerInfo[key])
-            if (isInputInvalid) {
-                console.log("Input is invalid : ",key,isInputInvalid);
-                return;
+    /**
+     * Handles the user sign-up form submission.
+     *
+     * Validates the registration information to ensure all inputs are correct.
+     * If any input is invalid, it logs the error and stops the process.
+     * Checks the uniqueness of the email; if already used, sets an error message.
+     * Sets the sign-up form as complete if all checks pass.
+     * Logs the registration information for debugging.
+     * Catches and logs any errors during the sign-up process.
+     */
+    const HandleUserSignUpForm =  async() => {
+        try {
+            // check if the inputs ar valid
+            for (let key in registerInfo) {
+                let isInputInvalid = HandleInvalid(key,registerInfo[key])
+                if (isInputInvalid) {
+                    console.log("Input is invalid : ",key,isInputInvalid);
+                    return;
+                }
             }
+
+            // check if the email as not been used
+            setLoading(true)
+            let checkIfEmailHasBeenUsed = await RequestCheckEmailUniqueness(registerInfo.email)
+            setLoading(false)
+            if (!checkIfEmailHasBeenUsed) {
+                setErr({...err, email : RegisterFormErrMessage["emailAlreadyExist"]})
+                return ;
+            }
+            setSignUpFormComplete(true)
+            console.log(registerInfo)         
+        } catch (error) {
+            console.log("Error from sign-up");
         }
 
-        // check if the email as not been used
-        setLoading(true)
-        let checkIfEmailHasBeenUsed = await RequestCheckEmailUniqueness(registerInfo.email)
-        setLoading(false)
-        if (!checkIfEmailHasBeenUsed) {
-            setErr({...err, email : RegisterFormErrMessage["emailAlreadyExist"]})
-            return ;
-        }
-        setSignUpFormComplete(true)
-        console.log(registerInfo)         
-    } catch (error) {
-        console.log("Error from sign-up");
     }
 
-  }
-
+    /**
+     * Handles the submission of the verification code form.
+     *
+     * Disables the "Send Code" button during the verification process.
+     * Generates a random string and saves it as a cookie named "verify" with a max age of 20 minutes.
+     * Calls the `RequestForVerificationCode` function to request a verification code to be sent to the user's email.
+     * Enables the "Send Code" button after the verification process is complete.
+     * Sets a notification of success or failure of the verification process.
+     * Removes the notification after 3 seconds.
+     */
     const HandleSendCode = async () => {
 
         setVerify({...verify,disabled:true})
@@ -150,6 +232,20 @@ const Register = () => {
 
     }
 
+    /**
+     * Handles the OTP verification process.
+     *
+     * Updates the `verify` state based on the input field's name and value.
+     * Logs the name and value of the input field.
+     * Displays an error if the OTP length is not equal to 7.
+     * Clears any existing error if the OTP length is valid and proceeds to check OTP validity.
+     * Checks if there's a valid `verifyId` cookie before proceeding with OTP validation.
+     * Invokes the `RequestRegisterUser` function to validate the OTP against the server.
+     * Displays the appropriate notification and error messages based on the server's response.
+     * Redirects the user to the home page on successful OTP verification.
+     * Removes the `verify` cookie on a successful verification.
+     * Sets a notification timeout to clear messages after 2 seconds.
+     */
     const verifyOTP = async (event) => {
 
         const value =  event.target.value
@@ -230,6 +326,13 @@ const Register = () => {
             return 
         }
     }
+    
+    /**
+     * Handles the action of navigating back in the registration process.
+     * 
+     * Sets the sign-up form completion state to false, allowing the user
+     * to return to the previous step in the registration form.
+     */
     const HandleArrowBack = () => {
         setSignUpFormComplete(false)
     }

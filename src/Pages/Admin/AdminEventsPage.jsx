@@ -7,7 +7,8 @@ import PageContainer from '../PageContainer'
 const AdminEventsPage = ({userObject,logged}) => {
 
   let {eventID} = useParams() 
-
+  
+  
   return (
     <PageContainer userObject={userObject} logged={logged} >
       <div className="flex flex-col overflow-hidden ">
