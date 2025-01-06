@@ -59,6 +59,16 @@ const TopBar = ({userObject,logged}) => {
         VerifyNotifications();
       }
     }, [logged,userObject])
+
+
+    useEffect(() => {
+      if (cookies.reminder !== "ignore") {
+        if (userObject && !userObject.nextReminder ) {
+          setDisplayReminderPopUp(true)
+        }        
+      }
+
+    }, [userObject])
     
 
 

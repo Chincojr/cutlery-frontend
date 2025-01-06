@@ -182,29 +182,27 @@ const ReminderPopUp = ({
     }
   }
 
-  useEffect(() => {
+  // useEffect(() => {
 
-  /**
-   * Handles the display of the reminder pop-up based on the user's notification
-   * preference and reminder status.
-   * 
-   * If the user has not set the reminder cookie to ignore and the user does not
-   * have a knife sharpning reminder set-up, it displays the reminder pop-up.
-   */
-    const ReminderPopUp = async() => {
-      if (cookies.reminder !== "ignore") {
-        if (!userObject.nextReminder) {          
-          setDisplayReminderPopUp(true)            
-        }
-      } 
+  // /**
+  //  * Handles the display of the reminder pop-up based on the user's notification
+  //  * preference and reminder status.
+  //  * 
+  //  * If the user has not set the reminder cookie to ignore and the user does not
+  //  * have a knife sharpning reminder set-up, it displays the reminder pop-up.
+  //  */
+  //   const ReminderPopUp = async() => {
+  //     if (cookies.reminder === "ignore") {
+  //       setDisplayReminderPopUp(false);
+  //     } 
 
-    }
+  //   }
   
-    if ( cookies.type && cookies.uid  && userObject ) {      
-      ReminderPopUp();
-    }
+  //   if ( cookies.type && cookies.uid  && userObject ) {      
+  //     ReminderPopUp();
+  //   }
 
-  }, [userObject])
+  // }, [userObject])
 
 
   return (
