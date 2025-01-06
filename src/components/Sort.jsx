@@ -20,7 +20,7 @@ const Sort = ({info,setInfo, sortFunctions}) => {
    */
   const [sortInfo, setSortInfo ] = useState({
       order: "Ascending",
-      sortBy: "Title",
+      sortBy: sortFunctions[0] || "",
   });
 
   /**
@@ -40,8 +40,7 @@ const Sort = ({info,setInfo, sortFunctions}) => {
    * @function
    */
   const  HandleSort =async () => {
-    let sortedInfo = await SortInfoBasedOfKey(sortInfo.order,sortInfo.sortBy,info)
-    console.log("This is the sorted info: ",sortInfo, sortedInfo);
+    let sortedInfo = await SortInfoBasedOfKey(sortInfo.order,sortInfo.sortBy,info)    
     setInfo([])
     setTimeout(() => {
         setInfo(sortedInfo)

@@ -51,7 +51,8 @@ const UserAccount = ({userObject,logged}) => {
    * State to trigger the reminder pop-up.
    * @type {boolean}
    */
-  const [triggerReminderPopUp, setTriggerReminderPopUp] = useState(false);
+  const [displayReminderPopUp, setDisplayReminderPopUp] = useState(false)
+  // const [triggerReminderPopUp, setTriggerReminderPopUp] = useState(false);
   
   /**
    * State to allow profile changes.
@@ -129,25 +130,10 @@ const UserAccount = ({userObject,logged}) => {
    * Handles the display of the reminder pop-up by setting the triggerReminderPopUp
    * state to true.
    */
-  const HandleDisplayReminderPopUp = () => {
-    setTriggerReminderPopUp(true)
+  const HandleDisplayReminderPopUp = () => {    
+    setDisplayReminderPopUp(true)
   }
 
-  /**
-   * Hides the reminder pop-up by setting the triggerReminderPopUp state to false.
-   */
-  const HandleHideReminderPopUp = () => {
-    setTriggerReminderPopUp(false)
-  }
-
-  /**
-   * Handles the saving of the reminder pop-up by hiding the reminder pop-up and reloading
-   * the page to reflect the changes.
-   */
-  const HandleSaveReminderPopUp = () => {
-    HandleHideReminderPopUp();
-    window.location.reload(true);
-  }
 
 
   useEffect(() => {
@@ -235,7 +221,16 @@ const UserAccount = ({userObject,logged}) => {
           <div className=" text-white w-full flex flex-col items-center  ">
                 <button onClick={HandleLogOut} className="rounded-md outline-none uppercase accent p-2 px-4 text-[14px]">LOG OUT</button>
           </div>
-          <ReminderPopUp userObject={userObject} triggerDisplayExt={triggerReminderPopUp} HandleDismissExt={HandleHideReminderPopUp} HandleSaveExt={HandleSaveReminderPopUp}  />                
+
+          {
+            displayReminderPopUp ?
+              <ReminderPopUp 
+                userObject={userObject} 
+                displayReminderPopUp={displayReminderPopUp}
+                setDisplayReminderPopUp={setDisplayReminderPopUp}
+              /> 
+            : <></>
+          }      
       </div>     
 
     </PageContainer>

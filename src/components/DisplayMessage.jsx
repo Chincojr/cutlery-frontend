@@ -27,22 +27,18 @@ const Reply = ({userObject,userID,reply}) => {
 }    
 
 const Message = ({text,images,pending}) => {
-    // console.log("Msg images: ", images,typeof images);
-    // console.log(images ? JSON.parse(images) : "No images");
-    
+            
     return (
-        <div className="">
-            <div className="flex w-full justify-center ">
-                <DisplayImages images={images} pending={pending} />
-            </div>
-            <div className="text-[14px] font-semibold ">{text}</div>
+        <div className="w-fit">
+            <DisplayImages images={images} pending={pending} />                
+            <div className={`text-[14px] flex font-semibold `}>{text}</div>
         </div>        
     )
 }
 
 const CheckUser = ({msg,userID,selectedMessages,handleSelectMessages}) => {
     return (
-        <div onClick={() => handleSelectMessages(msg.messageID, msg)} className={`w-full flex items-center px-2 ${msg.from === userID ? "" : "justify-end"} ${selectedMessages && Object.keys(selectedMessages).length > 0 ? "" : "invisible"}`}>
+        <div onClick={() => handleSelectMessages(msg.messageID, msg)} className={`w-full h-full flex items-center px-2 ${msg.from === userID ? "" : "justify-end"} ${selectedMessages && Object.keys(selectedMessages).length > 0 ? "" : "invisible"}`}>
             <div className={ ` w-[20px] h-[20px] flex items-center ${selectedMessages && Object.keys(selectedMessages).length > 0 ? "border-[1px]" : "invisible"} ${selectedMessages && Object.keys(selectedMessages).length > 0 && selectedMessages[msg.messageID] ? "primary" : "" } `}>
                 <div className={`flex w-full h-full items-center${selectedMessages && Object.keys(selectedMessages).length > 0 && selectedMessages[msg.messageID] ? "" : "invisible" }`}>
                     <IconSelector type={"Check"} size={25} color={"white"} />                                                
@@ -102,9 +98,10 @@ const DisplayMessage = ({
   }, [messages,pendingMessages,reply]);  
 
   useEffect(() => {    
-    let chatMessages = chat && chat.messages && chat.messages.length > 0 ? chat.messages : []
+    let chatMessages = chat && chat.messages && JSON.parse(chat.messages.length) && JSON.parse(chat.messages.length ) > 0 ? JSON.parse(chat.messages) : []
     let chatPendingMessage = pendingMessages && pendingMessages[to] ? pendingMessages[to] : [] 
-    setMessages([...chatMessages, ...chatPendingMessage])        
+    setMessages([...chatMessages, ...chatPendingMessage])            
+    
   }, [chat,pendingMessages])
   
 
@@ -123,7 +120,7 @@ const DisplayMessage = ({
                 ?
                 <>
                     {
-                        messages.map((msg,index) => {                            
+                        messages.map((msg,index) => { 
                             
                             // MessageReply
                             messagesObject = {
@@ -155,51 +152,42 @@ const DisplayMessage = ({
                                 }                                
                             }
                             let state = msg.state
-                            let images = state === "pending" ? msg.images : JSON.parse(msg.images) ? JSON.parse(msg.images) : [];
+                            let images = state === "pending" ? msg.images : JSON.parse(msg.images) ? JSON.parse(msg.images) : [];                            
                             
                             return (
-                                <div key={index} ref={el => (messageRefs.current[msg.messageID] = el)} className={`flex flex-col w-full ${msg.messageID === foundMessageID ? "secondary" : ""}`}>
+                                <div key={index} ref={el => (messageRefs.current[msg.messageID] = el)} className={`flex flex-col w-full px-1 py-2 gap-2  ${msg.messageID === foundMessageID ? "primary" : ""}`}>
+
                                     <div className="w-full flex justify-center">
                                         <div className={` w-fit p-1 text-[12px] text-center primary rounded-md text-white ${formattedDate ? "" : "hidden"} `}>{formattedDate}</div>
                                     </div>
+
                                     <div key={index} className={` group flex gap-2 justify-start ${msg.from === userID ? "flex-row-reverse" : ""} `}>
 
                                         {/* Message Container */}
-                                        <div onDoubleClick={() => handleSelectMessages(msg.messageID, msg)} className={`flex ${msg.from === userID ? "justify-end" : ""}  w-full max-w-[60%] gap-2`}>
+                                        <div onDoubleClick={() => handleSelectMessages(msg.messageID, msg)} className={`flex gap-2 max-w-[90%] md:max-w-[60%]   flex-col  ${msg.from === userID ? "userChatMsg rounded-l-xl " : "neutral rounded-r-xl "} p-2 rounded-b-xl `}>
 
-                                            {/* Reply Arrow Button */}
-                                            <div className={` invisible ${msg.from === userID ? "group-hover:visible flex" : "hidden"} items-center justify-center w-fit `}>
-                                                <button onClick={() => HandSelect(msg)} className={` w-fit ${msg.from === userID ? "-scale-y-[1]" : "rotate-180"}`}>
-                                                    <IconSelector type={"Reply"} />
-                                                </button>
+                                            {/* sender */}
+                                            <div className="flex gap-1 text-[12px]">
+                                                <div className="">{formattedTime}</div>
                                             </div>
 
-                                            <div className={`flex flex-col gap-2 ${msg.from === userID ? "userChatMsg rounded-l-xl " : "neutral rounded-r-xl "} p-2 rounded-b-xl w-fit`}>
-                                                {/* sender */}
-                                                <div className="flex gap-1 text-[12px]">
-                                                    <div className="">{formattedTime}</div>
-                                                </div>
+                                            {/* reply */}
+                                            {
+                                                reply ?
+                                                <Reply userObject={userObject} userID={userID} reply={reply} />
+                                                :<></>
+                                            }
 
-                                                {/* reply */}
-                                                {
-                                                    reply ?
-                                                    <Reply userObject={userObject} userID={userID} reply={reply} />
-                                                    :<></>
-                                                }
+                                            {/* message */}
+                                            <Message text={msg.text} images={images} pending={state === "pending" ? true : false} />                                               
+                                                                                                                   
+                                        </div>   
 
-                                                {/* message */}
-                                                <Message text={msg.text} images={images} pending={state === "pending" ? true : false} />                                               
-                                       
-                                            </div>
-
-                                            {/* Reply Arrow Button */}
-                                            <div className={` invisible ${msg.from === userID ? "hidden" : "group-hover:visible flex"} items-center justify-center w-fit `}>
-                                                <button onClick={() => HandSelect(msg)} className={` w-fit ${msg.from === userID ? "-scale-y-[1]" : "rotate-180"}`}>
-                                                    <IconSelector type={"Reply"} />
-                                                </button>
-                                            </div>
-                                
-                                        </div>                                        
+                                        <div className={` group-hover:visible invisible flex items-center justify-center w-fit `}>
+                                            <button onClick={() => HandSelect(msg)} className={` w-fit ${msg.from === userID ? "-scale-y-[1]" : "rotate-180"}`}>
+                                                <IconSelector type={"Reply"} />
+                                            </button>
+                                        </div>                                     
 
                                         {/* Check Container */}
                                         <CheckUser msg={msg} userID={userID} selectedMessages={selectedMessages} handleSelectMessages={handleSelectMessages} />

@@ -21,6 +21,7 @@ import UserContactPage from './Pages/Users/UserContactPage'
 import AdminViewSpecificNotifyPage from './Pages/Admin/AdminViewSpecificNotifyPage'
 import { RequestUserInfo } from './RequestFunction'
 import OfflinePage from './Pages/OfflinePage'
+import AdminViewUsersPage from './Pages/Admin/AdminViewUsersPage'
 
 
 /**
@@ -189,6 +190,9 @@ const App = () => {
                             {/* Admin Msg Urls */}
                             <Route path="/admin/view/msg" element={<AdminContactPage userObject={userObject} logged={logged} userID={userID} setUserObject={setUserObject} />} />
                             <Route path="/admin/view/msg/:msgID" element={<AdminContactPage userObject={userObject} logged={logged} userID={userID} setUserObject={setUserObject} />} />
+
+                            {/* Admin View Users Urls */}
+                            <Route path="/admin/users" element={<AdminViewUsersPage userObject={userObject} logged={logged} />} />
                           </>
                           : 
                           <></>

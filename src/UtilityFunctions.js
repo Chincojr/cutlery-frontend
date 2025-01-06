@@ -179,14 +179,15 @@ export function SearchInfoBasedOfType(unfilteredInfo,searchText, type) {
     console.log("Everything Else: ",unfilteredInfo,searchText,type);
     
     var filteredInfo = unfilteredInfo.filter(obj => {
+        searchText = searchText.toLowerCase()
         switch (type) {
           case "Events":
             var title = obj.title || ""
             var content = obj.content || ""
 
             if (               
-              title.toLowerCase().includes(searchText.toLowerCase()) ||
-              content.toLowerCase().includes(searchText.toLowerCase()) 
+              title.toLowerCase().includes(searchText) ||
+              content.toLowerCase().includes(searchText) 
             ) {
               return obj;
             }
@@ -196,19 +197,32 @@ export function SearchInfoBasedOfType(unfilteredInfo,searchText, type) {
               var caption = obj.caption || ""              
               
               if ( 
-                title.toLowerCase().includes(searchText.toLowerCase()) ||
-                caption.toLowerCase().includes(searchText.toLowerCase())                 
+                title.toLowerCase().includes(searchText) ||
+                caption.toLowerCase().includes(searchText)                 
               ) {
                 return obj;
               }
               break;  
           case "Chat":
               let chatText = JSON.parse(obj).text
-              if (chatText && chatText.toLowerCase().includes(searchText.toLowerCase())) {
+              if (chatText && chatText.toLowerCase().includes(searchText)) {
                 return JSON.stringify(obj);
-              }
-              
+              }              
               break;
+          case "Users":
+            let name = obj.name || ""
+            let email = obj.email || ""
+            let phoneNumber = obj.phoneNumber || ""
+            let notification = obj.notify === 1 ? "true" : "false"
+            if (
+              name.toLowerCase().includes(searchText) || 
+              email.toLowerCase().includes(searchText) || 
+              phoneNumber.toLowerCase().includes(searchText) || 
+              notification.toLowerCase().includes(searchText)  
+            ) {
+              return obj
+            }              
+            break;              
           default:
             break;
         }
@@ -256,6 +270,26 @@ export function SortInfoBasedOfKey(order, sortBy,info){
         aValue = a[property]
         bValue = b[property]
         break;
+      case "Name":
+        property = "name"
+        aValue = a[property]
+        bValue = b[property]
+        break;        
+      case "Email":
+        property = "email"
+        aValue = a[property]
+        bValue = b[property]
+        break;                
+      case "Phone Number":
+        property = "phoneNumber"
+        aValue = a[property]
+        bValue = b[property]
+        break; 
+      case "Notification State":
+        property = "notify"
+        aValue = a[property] === 1 ? "true" : "false"
+        bValue = b[property] === 1 ? "true" : "false"
+        break;                          
       default:
         break;
     }

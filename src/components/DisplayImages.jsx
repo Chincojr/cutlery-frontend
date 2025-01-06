@@ -4,7 +4,6 @@ import IconSelector from './IconSelector'
 
 const DisplayImages = ({images , pending}) => {
 
-//   console.log({images, pending});
   let fourImgs = images.length > 4 ?  images.slice(0, 4) : false
   const [display, setDisplay] = useState(false)
   const [imageInView, setImageInView] = useState(0)
@@ -35,11 +34,7 @@ const DisplayImages = ({images , pending}) => {
                 break;
         }        
 
-    }
-
-    
-
-    console.log(images.length,type,imageInView,images[imageInView]);
+    }        
   }
 
   const HandleImageDisplay = () => {
@@ -48,16 +43,17 @@ const DisplayImages = ({images , pending}) => {
     }
     setDisplay(!display)
 
-  }
+  }  
+  
 
   return (
     <div className="w-fit">
 
         {
             display  ?
-                <div className="absolute bg-black inset-0 z-[999999999] h-full w-full  ">
+                <div className="absolute bg-black inset-0 z-[999999999] h-screen w-screen overflow-hidden ">
 
-                    <div className={` relative h-full `}>
+                    <div className={` relative h-full overflow-hidden`}>
 
                         <div className="flex justify-end w-full p-2 absolute top-0 inset-x-0 z-[999999] ">
                             <button onClick={HandleImageDisplay} className="rotate-45 w-fit">
@@ -65,23 +61,26 @@ const DisplayImages = ({images , pending}) => {
                             </button>                
                         </div>
 
-                        <div ref={imageViewContainer} className={ `grid grid-flow-col h-full    `}>
+                        <div ref={imageViewContainer} className={ `grid grid-flow-col  h-screen w-screen `}>
+                            
                             {
                                 images.map((img, index) => {
                                     return (
-                                        <div key={index} className={` w-[100vw]  h-full  flex items-center justify-center  `}>
+                                        <div key={index} className={` flex justify-center items-center w-screen  `}>
+                                            {/* <div className="h-[">
+
+                                            </div> */}
                                             {
                                                 pending ?
                                                     <img src={img.data} alt="" className="  " />    
                                                 :
-                                                <img src={`${process.env.REACT_APP_IMAGE_URL}${img}`} alt="" className=" h-[100px] w-[200px] " />    
-
-
+                                                <img src={`${process.env.REACT_APP_IMAGE_URL}${img}`} alt="" className=" max-h-[50vw] max-w-[50vw] " />    
                                             }
                                         </div>
                                     )
                                 })
-                            } 
+                            }      
+
                         </div>                     
 
 
@@ -105,7 +104,7 @@ const DisplayImages = ({images , pending}) => {
         }
         {
             fourImgs ? 
-            <div className="grid grid-cols-2 grid-rows-1 w-[250px] gap-2">
+            <div className="grid grid-cols-[100px_100px] grid-rows-[100px_100px] w-full gap-2">
                 {
                     fourImgs.map((img,index) => {
                         return (
@@ -118,7 +117,7 @@ const DisplayImages = ({images , pending}) => {
                 }
             </div>
             : (
-                <div className="flex w-fit gap-2 items-center">
+                <div className="grid grid-cols-1 justify-center w-[250px] gap-2 items-center">
                     {
                         images.map((img) => {
                             return (

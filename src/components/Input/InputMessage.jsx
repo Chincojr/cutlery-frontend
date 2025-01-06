@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import Uploader from '../Uploader';
 import IconSelector from '../IconSelector';
-import testDisplay from '../../assets/download.png'
+import testDisplay from '../../assets/defaultUser.png'
 import { ConvertImageInfoToDisplay, generateRandomString, getBase64Size } from '../../UtilityFunctions';
 import { WSSend } from '../../WebSocket';
 

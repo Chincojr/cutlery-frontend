@@ -2,9 +2,15 @@ import React, { useEffect, useState } from 'react'
 import IconSelector from './IconSelector'
 import Unavailable from './Unavailable'
 import { useParams } from 'react-router-dom'
-import SearchBar from './SearchBar'
+import defaultUser from '../assets/defaultUser.png'
 
-const AdminChatList = ({setSelectedChat,selectedChat, userObject}) => {
+const AdminChatList = ({
+        setSelectedChat,
+        selectedChat, 
+        userObject,
+        onlineUsers,
+        setChatInfo
+}) => {
 
   const [searchText, setSearchText] = useState("")
   const [chatList, setChatList] = useState([])
@@ -12,8 +18,7 @@ const AdminChatList = ({setSelectedChat,selectedChat, userObject}) => {
   let {msgID} = useParams()
 
   const HandleSearch = (event) => {
-      let value = event.target.value
-      console.log("ChatList: ", chatList, value);    
+      let value = event.target.value        
       if (chatList && value) {
         let listToUse = unFilteredChatList && unFilteredChatList.length > 0 ? unFilteredChatList : chatList
         let filteredChatList = listToUse.filter(chat => chat.name && chat.name.toLowerCase().includes(value.toLowerCase().trim()))
@@ -34,30 +39,18 @@ const AdminChatList = ({setSelectedChat,selectedChat, userObject}) => {
         select the msgID
     */
     
-    const GetUsersInfo = async () => {
-        if (msgID && userObject.UsersInformation[msgID]) {
-            setSelectedChat(userObject.UsersInformation[msgID])
+    const GetUsersInfo = async () => {        
+        
+        if (msgID && userObject && userObject.UsersInformation) {            
+            setSelectedChat(() => {                
+                return userObject.UsersInformation.find(user=> user.systemID === msgID)
+            })
         }
 
     }
 
     GetUsersInfo()
-  }, [])
-
-
-  useEffect(() => {
-    /*
-        when the userObject changes 
-        Re-select the chat 
-    */
-    const ReSelectChat = () => {
-        if (selectedChat && selectedChat.systemID) {
-            setSelectedChat(userObject.UsersInformation[selectedChat.systemID])
-        }
-    }
-    ReSelectChat()
-  }, [userObject])
-
+  }, [msgID,userObject])
 
 
   useEffect(() => {
@@ -67,9 +60,10 @@ const AdminChatList = ({setSelectedChat,selectedChat, userObject}) => {
     */
 
     const SelectUserInformation = () => {
-        if (userObject && userObject.UsersInformation && Object.keys(userObject.UsersInformation).length > 0) {
-            setChatList(Object.values(userObject.UsersInformation))
-            setUnFilteredChatList(Object.values(userObject.UsersInformation))
+        
+        if (userObject && userObject.UsersInformation && userObject.UsersInformation.length > 0) {
+            setChatList(userObject.UsersInformation)
+            setUnFilteredChatList(userObject.UsersInformation)
         }
     }
 
@@ -77,9 +71,6 @@ const AdminChatList = ({setSelectedChat,selectedChat, userObject}) => {
   }, [userObject])
 
 
-  console.log("ChatList: ", chatList);
-  
-    
 
   return (
     <div className="bg-white overflow-hidden flex flex-col rounded  ">
@@ -91,8 +82,7 @@ const AdminChatList = ({setSelectedChat,selectedChat, userObject}) => {
         
         <div className=" w-full flex flex-col gap-2 h-full overflow-hidden py-2  ">
 
-            <div className="px-4 flex items-center h-fit">
-                {/* <SearchBar searchInfo={chatList} setSearchInfo={setChatList} type={"UsersList"} /> */}
+            <div className="px-4 flex items-center h-fit">                
                 <button onClick={HandleBack} className={`${searchText ? "" : "hidden"}`}>
                     <IconSelector type={"ArrowBack"} size={25} />
                 </button>
@@ -111,24 +101,31 @@ const AdminChatList = ({setSelectedChat,selectedChat, userObject}) => {
                     chatList  ? 
                         <>
                             {
-                                chatList.map((userObj, index) => {                                    
+                                chatList.map((chatObject, index) => {                                                                                                            
                                     return (
-                                        <button onClick={() => setSelectedChat(userObj)} key={index} className={` ${selectedChat && selectedChat.systemID == userObj.systemID ? "bg-[#ecf0f1]" : ""} grid hover:bg-[#ecf0f1] px-2 grid-cols-[10%_90%] py-1 gap-2 h-[60px] w-full items-center border-black border-b-[1px]`}>
+                                        <div  key={index} className={` ${selectedChat && selectedChat.systemID == chatObject.systemID ? "bg-[#ecf0f1]" : ""} grid hover:bg-[#ecf0f1] px-2 grid-cols-[50px_auto] py-1 gap-2 h-[60px] w-full items-center border-black border-b-[1px]`}>
                                             <div className=" flex items-center justify-center rounded-full relative ">
-                                                <div className="relative">
+                                                <button onClick={() => setChatInfo(chatObject)} className="relative">
                                                     {
-                                                        userObj.imageID ? 
-                                                        <img src={userObj.imageID} alt="" className="h-[40px] w-[40px]" />
-                                                        :
-                                                        <IconSelector type={"User"} size={40} />
+                                                        chatObject.imageID ? 
+                                                            <img src={`${process.env.REACT_APP_IMAGE_URL}${chatObject.imageID}`} alt="" className="h-[45px] w-[45px] rounded-full" />
+                                                        :   
+                                                            <div className="border-black border-[1px] rounded-full">
+                                                                <img src={defaultUser} alt="" className="h-[45px] w-[45px] rounded-full" />          
+                                                            </div>                                                                                                                                                               
                                                     }
-                                                </div>
+                                                    {
+                                                        onlineUsers && onlineUsers.length > 0 && chatObject.systemID && onlineUsers.includes(chatObject.systemID) ?
+                                                            <div className="h-[10px] w-[10px] rounded-full secondary absolute right-[4px] bottom-[1px]"></div>
+                                                        : <></>                                                            
+                                                    }
+                                                    
+                                                </button>
                                             </div>
-                                            <div className="text-[11px] w-full flex ">
-                                                <div className=' font-bold truncate' >{userObj.name}</div>
-                                                <div className="truncate">{userObj.description}</div>
-                                            </div>
-                                        </button>
+                                            <button onClick={() => setSelectedChat(chatObject)} className="text-[11px] w-full flex h-full items-center ">
+                                                <div className=' font-bold truncate' >{chatObject.name}</div>                                                
+                                            </button>
+                                        </div>
                                     )
                                 })
                             }

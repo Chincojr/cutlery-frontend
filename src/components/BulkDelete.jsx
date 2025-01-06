@@ -132,8 +132,9 @@ const BulkDelete = ({ bulkDelete, info, type}) => {
 
   return (
     <div className={` ${bulkDelete && bulkDelete.length > 0 ? "visisble" : "invisible"} `}>
-        <button onClick={HandleConfirm} className="outline-none">
-            <IconSelector type={"Delete"} color={"#e74c3c"} />
+        <button onClick={HandleConfirm} className=" text-white outline-none w-[100px] flex items-center accent rounded-lg justify-center py-1 gap-1">
+            <div className="">Delete</div>
+            <IconSelector type={"Delete"} color={"white"} />
         </button>
         <div className={`absolute overlayBg ${overlay ? "" : "hidden"} inset-0 z-10 flex items-center justify-center`}>
           <div className="bg-white max-h-[300px] rounded p-5 overflow-hidden flex flex-col gap-2">

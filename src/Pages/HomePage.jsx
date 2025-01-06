@@ -30,9 +30,9 @@ const HomePage = ({userObject,logged}) => {
                 </div>
 
                 <div className="">Discover the Joy of a Newly Sharpened Knife!</div>
-                <button className="outline-none primary px-3 py-2">
+                <a target='_blank' href='https://cutlerycollection.net/contact-us/' className="outline-none primary px-3 py-2 text-center">
                   Contact Us
-                </button>
+                </a>
                 <img src={visitStore} alt="" className="w-[150px] h-[150px]" />
               </div>
 

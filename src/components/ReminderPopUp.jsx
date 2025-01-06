@@ -46,9 +46,8 @@ const RepeatFunctions = {
  */
 const ReminderPopUp = ({
     userObject, 
-    triggerDisplayExt, 
-    HandleSaveExt, 
-    HandleDismissExt
+    displayReminderPopUp,
+    setDisplayReminderPopUp,
   }) => {
 
   /**
@@ -80,7 +79,8 @@ const ReminderPopUp = ({
    * State for displaying the popup.
    * @type {boolean}
    */
-  const [displayPopUp, setDisplayPopUp] = useState(false);
+  // const [displayReminderPopUp, setDisplayReminderPopUp] = useState(false);
+
 
   /**
    * Handles the change event of an input field. Updates the repeatObject state
@@ -138,20 +138,12 @@ const ReminderPopUp = ({
  * Calls an external dismiss handler if provided.
  */
   const HandleDimiss = () => {
-    /* 
-      Set reminder cookie to ignore
-      Set reminderPopUp object to false
-      Set repeatObject back to default
-    */
     setCookie("reminder","ignore",{path: "/", maxAge:86400});
-    setDisplayPopUp(false);
+    setDisplayReminderPopUp(false);
     setRepeatObject({
       repeatType : false,
       repeatValue : 1,
     })
-    if (HandleDismissExt) {
-      HandleDismissExt();
-    }
   }
 
   /**
@@ -161,15 +153,7 @@ const ReminderPopUp = ({
    * function is provided, it calls it after the reminder pop-up is hidden.
    */
   const HandleSave = async() => {
-    /*
-      if the repeatType is true          
-        Update the user record          
-        Hide reminder pop-up
-        Reset reminder object information
-      else
-        flag and display error
-    */
-    console.log("Repeat object: ", repeatObject);
+    
     if (repeatObject.repeatType) {
       delete repeatObject.error
 
@@ -179,20 +163,14 @@ const ReminderPopUp = ({
       setLoading(false)
 
       if (updateUserReminderInfo) {
-        setDisplayPopUp(false);
-        setRepeatObject({
-          repeatType : false,
-          repeatValue : 1,
-        })          
+        setDisplayReminderPopUp(false);
+        window.location.reload(true);
+
       } else {
         setRepeatObject({
           ...repeatObject,
           error: "Select time"
         })          
-      }
-
-      if (HandleSaveExt) {
-        HandleSaveExt();
       }
 
 
@@ -214,27 +192,11 @@ const ReminderPopUp = ({
    * have a knife sharpning reminder set-up, it displays the reminder pop-up.
    */
     const ReminderPopUp = async() => {
-      /* 
-        if triggerNotifyfunction is false
-          set it to on 
-        else 
-          skip
-        if reminder cookie is set to ignore 
-          skip
-        Else
-          Retrieve the userObject
-          Check if the user has a knife sharpning reminder set-up 
-          IF yes
-            skip
-          else 
-            display pop up
-      */
-
       if (cookies.reminder !== "ignore") {
         if (!userObject.nextReminder) {          
-          setDisplayPopUp(true)            
+          setDisplayReminderPopUp(true)            
         }
-      }  
+      } 
 
     }
   
@@ -248,7 +210,7 @@ const ReminderPopUp = ({
   return (
     <div>
       {
-        displayPopUp || triggerDisplayExt ?
+        displayReminderPopUp  ?
         <div className='absolute overlayBg inset-0 z-[9999] flex justify-center items-center'>
 
           <div className="bg-white w-[300px] sm:w-[350px] p-2 px-5 rounded">

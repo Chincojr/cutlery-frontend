@@ -31,8 +31,11 @@ const TopBar = ({userObject,logged}) => {
      */
     const [notifyPermission, setNotifyPermission] = useState(false);
 
+    const [displayReminderPopUp, setDisplayReminderPopUp] = useState(false)
 
-    useEffect(() => {
+
+    useEffect(() => {      
+      
       /**
        * Verifies the user's push notification permission and if granted, retrieves the user's notification object.
        * 
@@ -84,7 +87,19 @@ const TopBar = ({userObject,logged}) => {
         : <></>
       }
 
-      <ReminderPopUp userObject={userObject} /> 
+      {
+        displayReminderPopUp ?
+          <ReminderPopUp 
+            userObject={userObject} 
+            displayReminderPopUp={displayReminderPopUp}
+            setDisplayReminderPopUp={setDisplayReminderPopUp}
+          /> 
+        : <></>
+      }
+
+      {/* <ReminderPopUp 
+        userObject={userObject} 
+      />  */}
 
       
 

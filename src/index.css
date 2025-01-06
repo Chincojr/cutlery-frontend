@@ -23,32 +23,27 @@
     bg-[#ecf0f1]
   }
 
-
   .focusBorder{
     @apply
     has-[:focus]:border-[1px] 
     has-[:focus]:border-[#3498db]
   }
   
-  
   .invalidBorder{
     @apply
     border-[1px] 
     border-[#e74c3c]
   }
-  
 
   .primaryText{
     @apply
     text-[#135994]
   }
   
-
   .accentText{
     @apply
     text-[#e74c3c]
   }
-
 
 .textOverflow{
  -webkit-box-orient: vertical;

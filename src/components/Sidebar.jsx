@@ -60,6 +60,11 @@ const adminSideBarFormat = [
     icon : "CreateEvent",
   },
   {
+    name : "Users",
+    url : "/admin/users",
+    icon : "Users",
+  },
+  {
     name : "Contact",
     url : "/admin/view/msg",
     icon : "Msgs",

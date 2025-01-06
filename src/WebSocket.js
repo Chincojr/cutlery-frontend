@@ -27,16 +27,16 @@ export function WSConnect(
 
     socket.onmessage = async function(event) {        
         let data = JSON.parse(event.data);          
-        console.log("WebSocket Data: ",data);
+        // console.log("WebSocket Data: ",data);
           
         switch (data.action) {
             case "remove_pending":
                 HandleRemovePending(data.message.recipient,data.message.messageID);
-                console.log("Remove Pending: ",data,data.message);  
+                // console.log("Remove Pending: ",data,data.message);  
                 break;      
             case "contact":
                 HandleUpdateChat(data.message);
-                console.log("Contact Updated Chat: ",data,data.message);                           
+                // console.log("Contact Updated Chat: ",data,data.message);                           
                 break;  
             case "online_users":                
                 setOnlineUsers(data.message)   

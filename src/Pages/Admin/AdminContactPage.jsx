@@ -6,6 +6,7 @@ import PageContainer from '../PageContainer'
 import { useCookies } from 'react-cookie'
 import { allCookies } from '../../UtilityObjs'
 import { WSClose, WSConnect } from '../../WebSocket'
+import UserInformation from '../../components/UserInformation'
 
 const AdminContactPage = ({
     userObject,
@@ -20,6 +21,7 @@ const AdminContactPage = ({
   const [connectivityState, setConnectivityState] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState([])
   const [pendingMessages, setPendingMessages] = useState({})
+  const [chatInfo, setChatInfo] = useState(false)
 
   const HandleRemovePending = (chatID,messageID) => {
     if (!chatID || !messageID) {
@@ -35,7 +37,7 @@ const AdminContactPage = ({
     if (prevPendingMessages && prevPendingMessages[chatID]) {
         prevPendingMessages[chatID] = prevPendingMessages[chatID].filter(message => message.messageID !== messageID)
         setPendingMessages(prevPendingMessages)
-    }
+    }        
 
   }
 
@@ -53,22 +55,19 @@ const AdminContactPage = ({
         prevSelectedChat = lastSelectedChat
         return lastSelectedChat
     })
-                 
-      console.log("Updated User Object");
-      
-      if(cookies.type === "Admin") {  
-        console.log("WebSocket Cookies: ", cookies.type);              
-        prevUserObject.UsersInformation[updatedChat.clientID] = JSON.parse(updatedChat.chat) || null
-      } else {      
-        console.log("WebSocket Cookies: ", cookies.type);  
-        prevUserObject.Admin = JSON.parse(updatedChat.chat) || null;        
+                       
+    for (let i = 0; i < prevUserObject.UsersInformation.length; i++) {
+      const user = prevUserObject.UsersInformation[i];
+      if (user.systemID === updatedChat.clientID) {
+        user.messsages = updatedChat.chat ?? null
       }
-      setUserObject(prevUserObject)           
+      break;          
+    }          
+    setUserObject(prevUserObject)           
           
-
     setSelectedChat(prevChat => ({
         ...prevChat,
-        messages: JSON.parse(updatedChat.chat) || null
+        messages: updatedChat.chat ?? null
     }))    
 
   }
@@ -80,12 +79,7 @@ const AdminContactPage = ({
       window.removeEventListener('beforeunload', WSClose);
     };
   }, []); 
-  
-
-  console.log("Online Users: ", onlineUsers);
-  
-  
-
+    
   return (
     <PageContainer userObject={userObject} logged={logged} >
       <div className="md:hidden grid grid-cols-[50px_auto] overflow-hidden h-full w-full  ">
@@ -109,16 +103,29 @@ const AdminContactPage = ({
               setSelectedChat={setSelectedChat}
               connectivityState={connectivityState}
               setPendingMessages={setPendingMessages} 
-              pendingMessages={pendingMessages}
+              pendingMessages={pendingMessages}     
+              setChatInfo={setChatInfo}         
             />                                    
           :
-            <AdminChatList setSelectedChat={setSelectedChat} selectedChat={selectedChat} userObject={userObject}  />
+            <AdminChatList 
+              setSelectedChat={setSelectedChat} 
+              selectedChat={selectedChat} 
+              userObject={userObject} 
+              onlineUsers={onlineUsers}  
+              setChatInfo={setChatInfo}
+            />
         }
       </div>
 
       {/* desktop view */}
       <div className="hidden md:grid md:grid-cols-[300px_auto]  lg:grid-cols-2 xl:grid-cols-[30%_70%] overflow-hidden h-full w-full  " >
-        <AdminChatList setSelectedChat={setSelectedChat} selectedChat={selectedChat} userObject={userObject}  />
+        <AdminChatList 
+          setSelectedChat={setSelectedChat} 
+          selectedChat={selectedChat} 
+          userObject={userObject} 
+          onlineUsers={onlineUsers} 
+          setChatInfo={setChatInfo}
+        />
         <ChatMessages 
           userObject={ userObject } 
           selectedChat={selectedChat} 
@@ -129,9 +136,19 @@ const AdminContactPage = ({
           setSelectedChat={setSelectedChat}
           connectivityState={connectivityState}
           setPendingMessages={setPendingMessages} 
-          pendingMessages={pendingMessages}          
+          pendingMessages={pendingMessages}       
+          setChatInfo={setChatInfo}
         />
       </div>
+      
+      {
+        chatInfo ?
+          <div className="absolute overlayBg inset-0 flex items-center justify-center">
+            <UserInformation chatInfo={chatInfo} setChatInfo={setChatInfo} />        
+          </div>
+        :<></>        
+      }
+
     </PageContainer>
   )
 }

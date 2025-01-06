@@ -100,22 +100,13 @@ const UserContactPage = ({
         prevSelectedChat = lastSelectedChat
         return lastSelectedChat
     })
-                 
-      console.log("Updated User Object");
-      
-      if(cookies.type === "Admin") {  
-        console.log("WebSocket Cookies: ", cookies.type);              
-        prevUserObject.UsersInformation[updatedChat.clientID] = JSON.parse(updatedChat.chat) || null
-      } else {      
-        console.log("WebSocket Cookies: ", cookies.type);  
-        prevUserObject.Admin = JSON.parse(updatedChat.chat) || null;        
-      }
-      setUserObject(prevUserObject)           
-          
 
+    prevUserObject.Admin.messages = updatedChat.chat ?? null;                     
+    setUserObject(prevUserObject)           
+          
     setSelectedChat(prevChat => ({
         ...prevChat,
-        messages: JSON.parse(updatedChat.chat) || null
+        messages: updatedChat.chat ?? null
     }))    
 
   }

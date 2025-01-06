@@ -25,6 +25,10 @@ const UnavailableMessage = {
   Offline: {
     iconType: "Offline",
     text: "You are Offline"
+  },
+  Users: {
+    iconType: "Users",
+    text: "No User"
   }
 }
 

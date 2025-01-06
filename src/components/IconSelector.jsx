@@ -26,6 +26,10 @@ import { MdOutlineContentCopy } from "react-icons/md";
 import { IoIosCheckmark } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { MdMobiledataOff } from "react-icons/md";
+import { PiUsersFour } from "react-icons/pi";
+import { MdDelete } from "react-icons/md";
+
+
 
 
 
@@ -151,6 +155,10 @@ const IconSelector = ({type,size = 30,className,color}) => {
       return (
         <MdMobiledataOff  size={size} color={color} className={className} />
       )      
+    case "Users":
+      return (
+        <PiUsersFour  size={size} color={color} className={className} />
+      )            
     default:
       return (
         <></>
